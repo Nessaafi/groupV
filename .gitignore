@@ -9,3 +9,7 @@ __pycache__
 
 #For mac os users
 .DS_store
+Data/raw/SHP/
+*.dta
+*.zip
+Data/processed/shp_*
