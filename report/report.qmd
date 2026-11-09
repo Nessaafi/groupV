@@ -1,7 +1,7 @@
 ---
 title: Project Title
 author:
- - Cetaj, Jetemira
+ - Cetaj, Jetemiraa
  - Essaafi, Nagham
  - Frangioni, Luca
  - Name III, First Name III
