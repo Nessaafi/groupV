@@ -2,7 +2,7 @@
 title: Project Title
 author:
  - Essaafi, Nagham
- - Name II, First Name II
+ - Frangioni, Luca
  - Name III, First Name III
 institute: Name of the University
 date: today
