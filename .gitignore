@@ -1,0 +1,11 @@
+/.quarto/
+
+#ignore environments
+.venv
+.conda
+
+#ignore pycache
+__pycache__
+
+#For mac os users
+.DS_store

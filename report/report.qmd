@@ -1,0 +1,107 @@
+---
+title: Project Title
+author:
+ - Name I, First Name I
+ - Name II, First Name II
+ - Name III, First Name III
+institute: Name of the University
+date: today
+title-block-banner: "#0095C8" # chosen for the university of lausanne
+toc-location: right
+bibliography: references.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl
+format: 
+  ##############################################################################
+  # Use the code below if you want to render html, otherwise just comment it out#
+  html:
+    # if you want to remove the table of contents, set this to false
+    toc: true
+    number-sections: true
+    html-math-method: katex
+    self-contained: true
+    code-overflow: wrap
+    code-fold: true      # Show code but FOLDED (collapsible) in HTML
+    code-tools: true     # Add code tools dropdown menu
+    echo: true           # Show code in HTML (but folded)
+    include-in-header: # add custom css to make the text in the `</> Code` dropdown black
+      text: |
+        <style type="text/css">
+          .quarto-title-banner a {
+            color: #000000;
+          }
+        </style>
+  ##############################################################################
+  # Use the code below if you want to render pdf, otherwise just comment it out#
+  pdf:
+       # wrapping the code also in the pdf (otherwise, it overflows)
+    toc: false
+    echo: false          # HIDE code completely in PDF
+    include-in-header:
+      text: |
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+          commandchars=\\\{\},
+          breaklines, breaknonspaceingroup, breakanywhere
+        }
+  ##############################################################################
+  # Use the code below if you want to render docx, otherwise just comment it out#
+  docx: 
+    echo: false          # HIDE code completely in DOCX
+  ##############################################################################
+
+jupyter: python3
+abstract: |
+  This is the abstract of the report. It should be a short summary of the project, the data, the analysis and the results. It should be concise and to the point. It should not be longer than 250 words.
+execute: 
+  warning: false
+  # Note: echo setting is controlled per-format above (HTML, PDF, DOCX)
+---
+
+<!-- These are your sections, sections/_quarto_guide.qmd should be deleted -->
+
+{{< include sections/_quarto_guide.qmd >}}
+{{< include sections/_introduction.qmd >}}
+{{< include sections/_data.qmd >}}
+{{< include sections/_eda.qmd >}}
+{{< include sections/_analysis.qmd >}}
+{{< include sections/_conclusion.qmd >}}
+
+# References {.unnumbered}
+
+::: {#refs}
+:::
+
+# Appendices {.unnumbered}
+
+::: {.callout-note}
+## What Goes in Appendices?
+
+**Appendices = supplementary material** that supports but isn't essential to your main story.
+
+**Include in appendices:**
+
+- **Additional plots and visualizations** that provide extra detail but don't fit the main narrative flow
+- **Alternative visualizations** of the same data (e.g., different plot types)
+- **Exploratory plots** that informed your analysis but aren't central to your findings
+- **Full code listings** for complex analyses
+- **Extended statistical tables** with detailed results
+- **Technical details** about data processing steps
+- **Sensitivity analyses** or robustness checks
+- **Data dictionaries** with detailed variable descriptions
+
+**What to Keep in Main Report:**
+
+- **Key visualizations** that directly answer your research questions
+- **Essential plots** for understanding your methodology
+- **Critical results** that support your conclusions
+- **Main findings** that tell your data story
+
+**Remember:** Main report should be self-contained. Reference appendices when needed: "See @sec-appendix-plots for additional plots."
+:::
+
+
+### Appendix A: Additional Exploratory Plots {#sec-appendix-plots}
+
+### Appendix B: Complete Code Listings {#sec-appendix-code}
+
+### Appendix C: Supplementary Tables {#sec-appendix-tables}
