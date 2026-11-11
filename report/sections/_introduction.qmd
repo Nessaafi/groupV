@@ -1,80 +1,37 @@
 # Introduction
 
 ## Project Goals
-Describe the main goals of the project, including the motivation behind the research and the key questions you aim to answer.
 
-::: {.callout-tip}
-## Writing Tip: Make it Relevant
+Since the release of ChatGPT in late 2022, a central question for the labour market is which jobs are most exposed to generative AI. Earlier waves of automation mainly affected routine manual and clerical tasks. Large language models, in contrast, perform best on cognitive, text-based tasks such as writing, summarising, analysing and coding, which are typical of occupations held by university graduates. Highly educated and well-paid workers may therefore now be among the most exposed.
 
-Connect your project to real-world actuarial or insurance problems. For example, if analyzing claim data, explain how your insights could improve risk assessment or pricing strategies.
-:::
+As Master's students about to enter the Swiss labour market, we are directly concerned by this question. Evidence for Switzerland remains limited, as most existing studies focus on the United States or rely on aggregate data.
+
+The goal of this project is to assess whether occupational exposure to generative AI is associated with wages among tertiary-educated workers in Switzerland, and whether it helps predict them. To do so, we link individual microdata from the Swiss Household Panel (SHP) with the ILO (2025) generative-AI exposure index through ISCO-08 occupation codes. The analysis is predictive and associative: we do not aim to estimate a causal effect of AI on wages.
 
 ## Research Questions
-- Question 1: ...
-- Question 2: ...
-- (Add as necessary)
 
-::: {.callout-important}
-## Research Question Quality
+**Main question:** Among tertiary-educated workers in Switzerland, how is occupational exposure to generative AI associated with wages, and does it improve wage prediction beyond standard determinants (education, age, sex, sector, region, work rate and broad occupation group)?
 
-Good research questions are:
+**Sub-questions:**
 
-- **Specific**: Clearly defined and focused
-- **Measurable**: Can be answered with data
-- **Relevant**: Connected to the project goals
-- **Feasible**: Can be addressed with available data and methods
-:::
+1. **Distribution:** How is generative-AI exposure distributed across occupations, fields of study, sectors and regions? Are the best-paid occupations also the most exposed?
+2. 
+3. 
+4. **Young vs older graduates:** Does the relationship between AI exposure and wages differ between young graduates (aged 25 to 34) and older tertiary-educated workers?
+5. **Extension (augmentation vs automation):** Does the relationship differ between occupations more likely to be augmented by AI and those more likely to be automated, as measured by the dispersion of task-level exposure scores?
+
+## Evolution Since the Proposal
+
+- **Young graduates are now aged 25 to 34** (instead of about 23 to 30). Below 25, many employees are apprentices or students with very low full-time-equivalent incomes, and the wider range gives enough observations for the subgroup.
+- **Definition of tertiary education:** we follow the Federal Statistical Office and include ISCED 5A, 5B and 6, i.e. universities, universities of applied sciences and teacher education, but also higher vocational education. A stricter definition (ISCED 5A and 6) will be used as a robustness check.
+- **Target variable:** we use net employment income (after social contributions, not after taxes), deflated to 2020 francs and converted to full-time equivalent. Gross income is kept to compare with the FSO wage survey.
+- **Occupation codes:** the detailed 4-digit ISCO-08 codes of the SHP are still pending (additional contract). The results of this update use the 3-digit codes of the standard release; the final report will use 4-digit codes.
+- **ILO data format:** the ILO (2025) index was available as a task-level Excel file (3,265 tasks for 427 occupations), so no PDF extraction was needed.
 
 ## Related Work
 
-Discuss relevant academic papers, methodologies, and prior research that informed your project. Include both domain-specific literature (actuarial science, insurance, finance) and methodological references (statistical methods, data science techniques).
+Several studies measure how exposed occupations are to artificial intelligence. @felten2021 build an AI occupational exposure index by linking AI applications to the abilities required in each occupation. With the arrival of large language models, @eloundou2024 estimate that around 80% of US workers have at least some tasks exposed to LLMs, and that exposure tends to increase with wages and education. This contrasts with earlier automation, which mainly affected routine and lower-paid jobs.
 
-**Example structure:**
+The International Labour Organization proposed a global index of exposure to generative AI based on the tasks of each ISCO-08 occupation [@gmyrek2023]. Clerical work was found to be the most exposed, and the effect was described as mostly augmentation rather than full automation for most other occupations. The refined 2025 version of this index [@gmyrek2025], which we use, combines predictions from several language models with expert validation.
 
-- **Domain literature**: Academic papers on your topic (e.g., claims analysis, mortality modeling, risk assessment)
-- **Methodological references**: Statistical methods or data science techniques you applied
-- **Course materials**: @azizi2025dsas provides Python-based data science techniques for actuarial applications
-- **Technical resources**: Books like @mckinney2022python and @vanderplas2016python for implementation details
-
-::: {.callout-tip}
-## Academic Citations Recommended
-
-Your Related Work section can have **more value when including academic papers (further evidence)** from peer-reviewed journals or conference proceedings, not just books or course materials. Use Google Scholar, university library databases, or specialized actuarial journals to find relevant papers.
-
-**Recommended sources:**
-
-- Academic journals (Insurance: Mathematics and Economics, ASTIN Bulletin, Journal of Risk and Insurance)
-- Conference papers (actuarial conferences, data science symposiums)
-- Working papers from researchers in your field
-
-**Citation example**: "@azizi2022realestate investigated multi-modal approaches to real estate rental price prediction, demonstrating that models combining tabular data with visual information (property images and satellite imagery) outperform traditional methods relying solely on structured features. Their supervised learning framework fused dedicated neural network branches for each data type, achieving superior performance on 11,105 Swiss rental listings." *(This reference is already in your `references.bib` file and can be cited as `@azizi2022realestate`)*
-:::
-
-::: {.callout-note}
-## Citing Sources
-
-Always cite your sources properly! In Quarto, use `@citation_key` syntax. The bibliography will be automatically generated from the `references.bib` file.
-
-**Example**: `@azizi2025dsas` renders as: @azizi2025dsas
-
-Add entries to `references.bib` in [BibTeX](https://www.bibtex.com/g/bibtex-format/) format for all sources you cite (every article normally generates BibTeX, otherwise search an online tool that does it).
-:::
-
-::: {.callout-warning}
-## Avoiding Plagiarism
-
-Make sure to cite all sources that informed your work, including:
-
-- Datasets (with URLs)
-- Methods or techniques from papers or tutorials
-- Code snippets adapted from online resources
-- Inspiration from existing analyses
-
-When in doubt, cite it!
-:::
-
-::: {.callout-caution}
-## Common Mistake
-
-Don't just list your research questions without context. Explain **why** each question matters and **how** it relates to your dataset and project goals.
-:::
+Most of this evidence is for the United States or is based on aggregate data. Our contribution is to link the ILO index to individual Swiss panel data and to focus on tertiary-educated workers.
