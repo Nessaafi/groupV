@@ -1,0 +1,428 @@
+isco4,exposure_mean_2025,exposure_sd_2025,exposure_mean_2023,n_tasks,n_occupations,title,gradient_2025,major_group
+1111,0.313125,0.04037215270809465,0.225,8,1,Legislators,Not Exposed,1 - Managers
+1112,0.3766666666666667,0.07838207703295443,0.3222222222222222,9,1,Senior Government Officials,Minimal Exposure,1 - Managers
+1113,0.23049999999999998,0.09855666728672732,0.32857142857142857,7,1,Traditional Chiefs and Heads of Villages,Not Exposed,1 - Managers
+1114,0.36833333333333335,0.05694020986965188,0.3055555555555556,9,1,Senior Officials of Special-interest Organizations,Minimal Exposure,1 - Managers
+1120,0.3759090909090909,0.05500309908624159,0.29545454545454547,11,1,Managing Directors and Chief Executives,Minimal Exposure,1 - Managers
+1211,0.3728125,0.03773586537651262,0.3,8,1,Finance Managers,Minimal Exposure,1 - Managers
+1212,0.3563636363636364,0.0514825654513695,0.2727272727272727,11,1,Human Resource Managers,Minimal Exposure,1 - Managers
+1213,0.35927777777777775,0.0352846559349024,0.2222222222222222,9,1,Policy and Planning Managers,Not Exposed,1 - Managers
+1219,0.41899999999999993,0.1008519266603822,0.32999999999999996,10,1,Business Services and Administration Managers Not Elsewhere Classified,Exposed: Gradient 2,1 - Managers
+1221,0.41218750000000004,0.08540280084901866,0.2875,8,1,Sales and Marketing Managers,Exposed: Gradient 2,1 - Managers
+1222,0.38825,0.047210017096858965,0.33125,8,1,Advertising and Public Relations Managers,Minimal Exposure,1 - Managers
+1223,0.3975,0.06212027504308533,0.2375,8,1,Research and Development Managers,Minimal Exposure,1 - Managers
+1311,0.2697083333333333,0.12779910697037067,0.28750000000000003,12,1,Agricultural and Forestry Production Managers,Minimal Exposure,1 - Managers
+1312,0.2196153846153846,0.08279521771771045,0.31153846153846154,13,1,Aquaculture and Fisheries Production Managers,Not Exposed,1 - Managers
+1321,0.37875,0.10619182899571201,0.35833333333333334,12,1,Manufacturing Managers,Minimal Exposure,1 - Managers
+1322,0.34735,0.10917469436132574,0.355,10,1,Mining Managers,Minimal Exposure,1 - Managers
+1323,0.33840909090909094,0.06088177813673734,0.4090909090909091,11,1,Construction Managers,Minimal Exposure,1 - Managers
+1324,0.385,0.051994317871370245,0.38749999999999996,12,1,"Supply, Distribution and Related Managers",Minimal Exposure,1 - Managers
+1330,0.44022727272727274,0.07157561164124399,0.31363636363636366,11,1,Information and Communications Technology Service Managers,Exposed: Gradient 2,1 - Managers
+1341,0.29944444444444446,0.14999363412417802,0.2611111111111111,9,1,Child Care Service Managers,Minimal Exposure,1 - Managers
+1342,0.363,0.054477314340721464,0.315,10,1,Health Service Managers,Minimal Exposure,1 - Managers
+1343,0.34375,0.0932682064442827,0.25,10,1,Aged Care Service Managers,Minimal Exposure,1 - Managers
+1344,0.36924999999999997,0.06500053418583916,0.315,10,1,Social Welfare Managers,Minimal Exposure,1 - Managers
+1345,0.3629545454545454,0.10136455360367708,0.2727272727272727,11,1,Education Managers,Minimal Exposure,1 - Managers
+1346,0.4693181818181818,0.12457974809881274,0.41363636363636364,11,1,Financial and Insurance Services Branch managers,Exposed: Gradient 2,1 - Managers
+1349,0.3836111111111111,0.07448899993362183,0.3222222222222222,9,1,Professional Services Managers Not Elsewhere Classified,Minimal Exposure,1 - Managers
+1411,0.373,0.12639114772096274,0.395,10,1,Hotel Managers,Exposed: Gradient 1,1 - Managers
+1412,0.363,0.11563111845673531,0.42000000000000004,10,1,Restaurant Managers,Minimal Exposure,1 - Managers
+1420,0.4358571428571429,0.14754143889252333,0.43571428571428567,7,1,Retail and Wholesale Trade Managers,Exposed: Gradient 2,1 - Managers
+1431,0.3225,0.09812300953395184,0.3333333333333333,9,1,"Sports, Recreation and Cultural Centre Managers",Minimal Exposure,1 - Managers
+2111,0.37981818181818183,0.13833424607219877,0.35,11,1,Physicists and Astronomers,Exposed: Gradient 1,2 - Professionals
+2112,0.5363888888888888,0.12625687550035092,0.4444444444444444,9,1,Meteorologists,Exposed: Gradient 3,2 - Professionals
+2113,0.38749999999999996,0.10034316120194738,0.31666666666666665,9,1,Chemists,Minimal Exposure,2 - Professionals
+2114,0.36333333333333334,0.0974465665548732,0.325,12,1,Geologists and geophysicists,Minimal Exposure,2 - Professionals
+2120,0.5615,0.08750555537919996,0.5,10,1,"Mathematicians, Actuaries and Statisticians",Exposed: Gradient 3,2 - Professionals
+2131,0.396875,0.1029281129165955,0.35,8,1,"Biologists, Botanists, Zoologists and Related Professionals",Exposed: Gradient 2,2 - Professionals
+2132,0.28520833333333334,0.10464473629061968,0.30416666666666664,12,1,"Farming, Forestry and Fisheries Advisers",Not Exposed,2 - Professionals
+2133,0.38371428571428573,0.044966521938416534,0.35714285714285715,7,1,Environmental Protection Professionals,Minimal Exposure,2 - Professionals
+2141,0.367,0.07375635565834313,0.325,10,1,Industrial and Production Engineers,Minimal Exposure,2 - Professionals
+2142,0.3021428571428571,0.05978134762456867,0.34285714285714286,7,1,Civil Engineers,Not Exposed,2 - Professionals
+2143,0.3813888888888889,0.07189522662257286,0.3222222222222222,9,1,Environmental Engineers,Minimal Exposure,2 - Professionals
+2144,0.32339285714285715,0.06727088540973371,0.3071428571428571,7,1,Mechanical Engineers,Not Exposed,2 - Professionals
+2145,0.351625,0.12080555509932951,0.30624999999999997,8,1,Chemical Engineers,Minimal Exposure,2 - Professionals
+2146,0.2925,0.051036139156483994,0.27222222222222225,9,1,"Mining Engineers, Metallurgists and Related Professionals",Not Exposed,2 - Professionals
+2149,0.3047222222222222,0.08099425562621367,0.2222222222222222,9,1,Engineering Professionals Not Elsewhere Classified,Not Exposed,2 - Professionals
+2151,0.31416666666666665,0.08493625060400693,0.3333333333333333,6,1,Electrical Engineers,Not Exposed,2 - Professionals
+2152,0.42378125,0.13070040970943544,0.2875,8,1,Electronics Engineers,Exposed: Gradient 2,2 - Professionals
+2153,0.48214285714285715,0.12372203868811271,0.33571428571428574,7,1,Telecommunications Engineers,Exposed: Gradient 2,2 - Professionals
+2161,0.37138888888888894,0.08003037617749345,0.39444444444444443,9,1,Building Architects,Minimal Exposure,2 - Professionals
+2162,0.37083333333333335,0.07932330994102553,0.38333333333333336,9,1,Landscape Architects,Minimal Exposure,2 - Professionals
+2163,0.3497222222222222,0.08608176023086683,0.37777777777777777,9,1,Product and Garment Designers,Minimal Exposure,2 - Professionals
+2164,0.40812499999999996,0.057643454590637216,0.46875,8,1,Town and Traffic Planners,Minimal Exposure,2 - Professionals
+2165,0.43875,0.11828385954377474,0.38125,8,1,Cartographers and Surveyors,Exposed: Gradient 2,2 - Professionals
+2166,0.493,0.09098839974902782,0.42000000000000004,10,1,Graphic and Multimedia Designers,Exposed: Gradient 2,2 - Professionals
+2211,0.28659090909090906,0.1008171161514299,0.31363636363636366,11,1,Generalist Medical Practitioners,Not Exposed,2 - Professionals
+2212,0.2715,0.11712832900091019,0.2875,12,1,Specialist Medical Practitioners,Not Exposed,2 - Professionals
+2221,0.252,0.12726721669166982,0.25,10,1,Nursing Professionals,Not Exposed,2 - Professionals
+2222,0.2990625,0.14867832907224335,0.25,8,1,Midwifery Professionals,Minimal Exposure,2 - Professionals
+2230,0.32392857142857145,0.10685715877259877,0.35714285714285715,7,1,Traditional and Complementary Medicine Professionals,Minimal Exposure,2 - Professionals
+2240,0.23344444444444445,0.13039685685543873,0.23333333333333334,9,1,Paramedical Practitioners,Not Exposed,2 - Professionals
+2250,0.14194444444444446,0.04850544070285083,0.17777777777777778,9,1,Veterinarians,Not Exposed,2 - Professionals
+2261,0.14925,0.06339755515790811,0.20583333333333334,12,1,Dentists,Not Exposed,2 - Professionals
+2262,0.33234615384615385,0.08983489128566746,0.3346153846153846,13,1,Pharmacists,Minimal Exposure,2 - Professionals
+2263,0.28025,0.04539104782027202,0.32999999999999996,10,1,Environmental and Occupational Health and Hygiene Professionals,Not Exposed,2 - Professionals
+2264,0.2835714285714286,0.14320626981485735,0.17142857142857143,7,1,Physiotherapists,Minimal Exposure,2 - Professionals
+2265,0.4139285714285714,0.0723973000022725,0.38571428571428573,7,1,Dieticians and Nutritionists,Minimal Exposure,2 - Professionals
+2266,0.23764285714285713,0.03635096776074686,0.19999999999999998,7,1,Audiologists and Speech Therapists,Not Exposed,2 - Professionals
+2267,0.23714285714285713,0.06713525792862389,0.16428571428571428,7,1,Optometrists and Ophthalmic Opticians,Not Exposed,2 - Professionals
+2269,0.195,0.07635677535659258,0.1625,8,1,Health Professionals Not Elsewhere Classified,Not Exposed,2 - Professionals
+2310,0.36944444444444446,0.11638283927528911,0.3244444444444444,9,1,University and Higher Education Teachers,Minimal Exposure,2 - Professionals
+2320,0.34825,0.12222503153337017,0.39,10,1,Vocational Education Teachers,Minimal Exposure,2 - Professionals
+2330,0.2981818181818182,0.06929187280167594,0.3272727272727272,11,1,Secondary Education Teachers,Not Exposed,2 - Professionals
+2341,0.26125,0.08853946075683493,0.325,10,1,Primary School Teachers,Not Exposed,2 - Professionals
+2342,0.20805555555555555,0.05037015761120643,0.17222222222222222,9,1,Early Childhood Educators,Not Exposed,2 - Professionals
+2351,0.393,0.11384565575081615,0.35,10,1,Education Methods Specialists,Exposed: Gradient 1,2 - Professionals
+2352,0.28363636363636363,0.10152194120215859,0.32727272727272727,11,1,Special Needs Teachers,Not Exposed,2 - Professionals
+2353,0.3390625,0.10907023867346086,0.5375,8,1,Other Language Teachers,Minimal Exposure,2 - Professionals
+2354,0.35363636363636364,0.09118226003699706,0.36363636363636365,11,1,Other Music Teachers,Minimal Exposure,2 - Professionals
+2355,0.34625,0.10284325992067303,0.45999999999999996,10,1,Other Arts Teachers,Minimal Exposure,2 - Professionals
+2356,0.47000000000000003,0.10004998750624611,0.5166666666666667,6,1,Information Technology Trainers,Exposed: Gradient 2,2 - Professionals
+2359,0.32687499999999997,0.10131591569307989,0.41250000000000003,12,1,Teaching Professionals Not Elsewhere Classified,Minimal Exposure,2 - Professionals
+2411,0.51325,0.08436654719564081,0.5187499999999999,8,1,Accountants,Exposed: Gradient 3,2 - Professionals
+2412,0.5745833333333333,0.1113936338695649,0.45,6,1,Financial and Investment Advisers,Exposed: Gradient 3,2 - Professionals
+2413,0.6180555555555556,0.06136185930835032,0.5944444444444444,9,1,Financial Analysts,Exposed: Gradient 4,2 - Professionals
+2421,0.46011111111111114,0.10442155482040627,0.43333333333333335,9,1,Management and Organization Analysts,Exposed: Gradient 2,2 - Professionals
+2422,0.4178571428571428,0.05808450330173723,0.45,7,1,Policy Administration Professionals,Minimal Exposure,2 - Professionals
+2423,0.44800000000000006,0.06638900511379878,0.43,5,1,Personnel and Careers Professionals,Exposed: Gradient 2,2 - Professionals
+2424,0.406875,0.09161984735073198,0.46875,8,1,Training and Staff Development Professionals,Exposed: Gradient 2,2 - Professionals
+2431,0.5547222222222222,0.08629930152929653,0.5055555555555555,9,1,Advertising and Marketing Professionals,Exposed: Gradient 3,2 - Professionals
+2432,0.4315625,0.09210763792588382,0.38125,8,1,Public Relations Professionals,Exposed: Gradient 2,2 - Professionals
+2433,0.4992916666666667,0.09903223954701303,0.5499999999999999,12,1,Technical and Medical Sales Professionals (excluding ICT),Exposed: Gradient 3,2 - Professionals
+2434,0.5125,0.09100137361600649,0.5499999999999999,7,1,Information and Communications Technology Sales Professionals,Exposed: Gradient 3,2 - Professionals
+2511,0.49000000000000005,0.049095994405518144,0.37142857142857144,7,1,Systems Analysts,Exposed: Gradient 2,2 - Professionals
+2512,0.5265625,0.07117555634786826,0.34375,8,1,Software Developers,Exposed: Gradient 3,2 - Professionals
+2513,0.6045,0.08090117428072353,0.32,5,1,Web and Multimedia Developers,Exposed: Gradient 4,2 - Professionals
+2514,0.571,0.08324662155306972,0.6199999999999999,5,1,Applications Programmers,Exposed: Gradient 3,2 - Professionals
+2519,0.5502,0.16267552059237436,0.39,5,1,Software and Applications Developers and Analysts Not Elsewhere Classified,Exposed: Gradient 3,2 - Professionals
+2521,0.5675,0.08377051987423738,0.375,6,1,Database Designers and Administrators,Exposed: Gradient 3,2 - Professionals
+2522,0.5660000000000001,0.05248809388804282,0.43,5,1,Systems Aministrators,Exposed: Gradient 3,2 - Professionals
+2523,0.5157142857142857,0.060513674172907046,0.38571428571428573,7,1,Computer Network Professionals,Exposed: Gradient 3,2 - Professionals
+2529,0.4865625,0.05696078695032227,0.4375,8,1,Database and Network Professionals Not Elsewhere Classified,Exposed: Gradient 2,2 - Professionals
+2611,0.36325,0.09121136929620609,0.335,10,1,Lawyers,Minimal Exposure,2 - Professionals
+2612,0.3125,0.08400148808205721,0.2714285714285714,7,1,Judges,Not Exposed,2 - Professionals
+2619,0.372875,0.08878661216647475,0.3125,4,1,Legal Professionals Not Elsewhere Classified,Minimal Exposure,2 - Professionals
+2621,0.47275,0.11423933210589075,0.43499999999999994,10,1,Archivists and Curators,Exposed: Gradient 2,2 - Professionals
+2622,0.5533333333333333,0.039350190596743044,0.6499999999999999,9,1,Librarians and Related Information Professionals,Exposed: Gradient 3,2 - Professionals
+2631,0.5545833333333333,0.08180376556495467,0.5375,12,1,Economists,Exposed: Gradient 3,2 - Professionals
+2632,0.47777777777777775,0.12358855911630512,0.44999999999999996,9,1,"Sociologists, Anthropologists and Related Professionals",Exposed: Gradient 2,2 - Professionals
+2633,0.47125,0.0649175301000101,0.4125,8,1,"Philosophers, Historians and Political Scientists",Exposed: Gradient 2,2 - Professionals
+2634,0.39055555555555554,0.13503343207434884,0.40555555555555556,9,1,Psychologists,Exposed: Gradient 1,2 - Professionals
+2635,0.2831818181818182,0.10032503992704732,0.29090909090909095,11,1,Social Work and Counselling Professionals,Not Exposed,2 - Professionals
+2636,0.16577777777777777,0.11860731193499179,0.2222222222222222,9,1,Religious Professionals,Not Exposed,2 - Professionals
+2641,0.5454166666666667,0.09346679446020748,0.6833333333333332,6,1,Authors and Related Writers,Exposed: Gradient 3,2 - Professionals
+2642,0.53575,0.09898126927185096,0.5549999999999999,10,1,Journalists,Exposed: Gradient 3,2 - Professionals
+2643,0.5925,0.10948744220229088,0.5916666666666667,6,1,"Translators, Interpreters and Other Linguists",Exposed: Gradient 3,2 - Professionals
+2651,0.2100625,0.043425171683187234,0.23750000000000002,8,1,Visual Artists,Not Exposed,2 - Professionals
+2652,0.28034375,0.0945367405430291,0.375,8,1,"Musicians, Singers and Composers",Not Exposed,2 - Professionals
+2653,0.19354166666666664,0.10136695919611413,0.15,6,1,Dancers and Choreographers,Not Exposed,2 - Professionals
+2654,0.36514285714285716,0.06964894967245515,0.2642857142857143,7,1,"Film, Stage and Related Directors and Producers",Minimal Exposure,2 - Professionals
+2655,0.31428571428571433,0.14734960048098117,0.3071428571428571,7,1,Actors,Minimal Exposure,2 - Professionals
+2656,0.4725,0.11608186766243898,0.55,5,1,"Announcers on Radio, Television and Other Media",Exposed: Gradient 2,2 - Professionals
+2659,0.129375,0.06296080129731514,0.2,4,1,Creative and Performing Artists Not Elsewhere Classified,Not Exposed,2 - Professionals
+3111,0.2575,0.09469688484844684,0.2333333333333333,6,1,Chemical and Physical Science Technicians,Not Exposed,3 - Technicians and associate professionals
+3112,0.27638888888888885,0.07499074016911095,0.3055555555555556,9,1,Civil Engineering Technicians,Not Exposed,3 - Technicians and associate professionals
+3113,0.27025,0.04738538804315101,0.26666666666666666,6,1,Electrical Engineering Technicians,Not Exposed,3 - Technicians and associate professionals
+3114,0.3796428571428571,0.1053706609568156,0.3071428571428571,7,1,Electronics Engineering Technicians,Minimal Exposure,3 - Technicians and associate professionals
+3115,0.264375,0.08400414530588016,0.3375,8,1,Mechanical Engineering Technicians,Not Exposed,3 - Technicians and associate professionals
+3116,0.3234,0.023136551169091732,0.37,5,1,Chemical Engineering Technicians,Not Exposed,3 - Technicians and associate professionals
+3117,0.2821875,0.06306795513004773,0.2875,8,1,Mining and metallurgical technicians,Not Exposed,3 - Technicians and associate professionals
+3118,0.34750000000000003,0.10593124454771864,0.44375,8,1,Draughtspersons,Minimal Exposure,3 - Technicians and associate professionals
+3119,0.256,0.04836708591594081,0.42000000000000004,5,1,Physical and Engineering Science Technicians Not Elsewhere Classified,Not Exposed,3 - Technicians and associate professionals
+3121,0.28700000000000003,0.08144016208235345,0.3,5,1,Mining Supervisors,Not Exposed,3 - Technicians and associate professionals
+3122,0.34708333333333335,0.13442857459136678,0.35000000000000003,6,1,Manufacturing Supervisors,Minimal Exposure,3 - Technicians and associate professionals
+3123,0.2816666666666667,0.06487809080627038,0.20000000000000004,6,1,Construction Supervisors,Not Exposed,3 - Technicians and associate professionals
+3131,0.2754166666666667,0.11370374517431985,0.3416666666666666,6,1,Power Production Plant Operators,Not Exposed,3 - Technicians and associate professionals
+3132,0.265625,0.08801126145475444,0.3125,8,1,Incinerator and Water Treatment Plant Operators,Not Exposed,3 - Technicians and associate professionals
+3133,0.29375,0.10313522676564008,0.3666666666666667,6,1,Chemical Processing Plant Controllers,Not Exposed,3 - Technicians and associate professionals
+3134,0.29050000000000004,0.10957873881369505,0.3,5,1,Petroleum and Natural Gas Refining Plant Operators,Not Exposed,3 - Technicians and associate professionals
+3135,0.3072857142857143,0.12950349324209273,0.40714285714285714,7,1,Metal Production Process Controllers,Minimal Exposure,3 - Technicians and associate professionals
+3141,0.3811538461538462,0.1801839782712132,0.37307692307692303,13,1,Life Science Technicians (excluding Medical),Exposed: Gradient 1,3 - Technicians and associate professionals
+3142,0.2593055555555555,0.09440833664342242,0.2666666666666667,9,1,Agricultural Technicians,Not Exposed,3 - Technicians and associate professionals
+3143,0.21150000000000002,0.06762026323521671,0.275,10,1,Forestry Technicians,Not Exposed,3 - Technicians and associate professionals
+3151,0.23149999999999998,0.052249401910452534,0.29,5,1,Ships' Engineers,Not Exposed,3 - Technicians and associate professionals
+3152,0.2878125,0.10909888617344225,0.35,8,1,Ships' Deck Officers and Pilots,Not Exposed,3 - Technicians and associate professionals
+3153,0.2739642857142857,0.053188036830708114,0.24285714285714285,7,1,Aircraft Pilots and Related Associate Professionals,Not Exposed,3 - Technicians and associate professionals
+3154,0.31,0.09065239733651363,0.3,8,1,Air Traffic Controllers,Minimal Exposure,3 - Technicians and associate professionals
+3155,0.3432222222222222,0.10292597798633953,0.3,9,1,Air Traffic Safety Electronics Technicians,Minimal Exposure,3 - Technicians and associate professionals
+3211,0.22,0.02875388172552907,0.19999999999999998,8,1,Medical Imaging and Therapeutic Equipment Technicians,Not Exposed,3 - Technicians and associate professionals
+3212,0.307125,0.16371983394744138,0.3,10,1,Medical and Pathology Laboratory Technicians,Minimal Exposure,3 - Technicians and associate professionals
+3213,0.29994444444444446,0.12002875812811602,0.37777777777777777,9,1,Pharmaceutical Technicians and Assistants,Minimal Exposure,3 - Technicians and associate professionals
+3214,0.18,0.05012484413940854,0.16,10,1,Medical and Dental Prosthetic Technicians,Not Exposed,3 - Technicians and associate professionals
+3221,0.21741666666666667,0.2080229354342128,0.25,6,1,Nursing Associate Professionals,Minimal Exposure,3 - Technicians and associate professionals
+3222,0.19687500000000002,0.06986221558658633,0.2125,4,1,Midwifery Associate Professionals,Not Exposed,3 - Technicians and associate professionals
+3230,0.1869166666666667,0.11020454467337847,0.20833333333333334,6,1,Traditional and Complementary Medicine Associate Professionals,Not Exposed,3 - Technicians and associate professionals
+3240,0.14100000000000001,0.02418677324489565,0.12,10,1,Veterinary Technicians and Assistants,Not Exposed,3 - Technicians and associate professionals
+3251,0.1640625,0.09677382966041416,0.15625,8,1,Dental Assistants and Therapists,Not Exposed,3 - Technicians and associate professionals
+3252,0.51625,0.10155971150018102,0.47500000000000003,6,1,Medical Records and Health Information Technicians,Exposed: Gradient 3,3 - Technicians and associate professionals
+3253,0.22458333333333336,0.07769196655167553,0.3,6,1,Community Health Workers,Not Exposed,3 - Technicians and associate professionals
+3254,0.24000000000000002,0.06582805886043833,0.2625,4,1,Dispensing Opticians,Not Exposed,3 - Technicians and associate professionals
+3255,0.17020833333333332,0.07299150920940509,0.16666666666666666,6,1,Physiotherapy Technicians and Assistants,Not Exposed,3 - Technicians and associate professionals
+3256,0.346,0.23149634026384858,0.385,10,1,Medical Assistants,Exposed: Gradient 1,3 - Technicians and associate professionals
+3257,0.24234999999999998,0.038786488197137245,0.325,10,1,Environmental and Occupational Health Inspectors and Associates,Not Exposed,3 - Technicians and associate professionals
+3258,0.21541666666666667,0.1744592836929771,0.14166666666666666,6,1,Ambulance Workers,Not Exposed,3 - Technicians and associate professionals
+3259,0.3047857142857143,0.15097705596736025,0.2642857142857143,7,1,Health Associate Professionals Not Elsewhere Classified,Minimal Exposure,3 - Technicians and associate professionals
+3311,0.6314,0.037655344906135195,0.6699999999999999,5,1,Securities and Finance Dealers and Brokers,Exposed: Gradient 4,3 - Technicians and associate professionals
+3312,0.605,0.03924283374069716,0.5666666666666667,6,1,Credit and Loans Officers,Exposed: Gradient 4,3 - Technicians and associate professionals
+3313,0.4920833333333334,0.12702772007190657,0.47500000000000003,6,1,Accounting Associate Professionals,Exposed: Gradient 2,3 - Technicians and associate professionals
+3314,0.565625,0.09835930851438807,0.48125,8,1,"Statistical, Mathematical and Related Associate Professionals",Exposed: Gradient 3,3 - Technicians and associate professionals
+3315,0.449,0.19405701481781074,0.39,5,1,Valuers and Loss Assessors,Exposed: Gradient 2,3 - Technicians and associate professionals
+3321,0.5266666666666667,0.11940128419186567,0.4583333333333333,6,1,Insurance Representatives,Exposed: Gradient 3,3 - Technicians and associate professionals
+3322,0.49000000000000005,0.08381527307120105,0.6285714285714284,7,1,Commercial Sales Representatives,Exposed: Gradient 2,3 - Technicians and associate professionals
+3323,0.394,0.08269085667580049,0.475,10,1,Buyers,Minimal Exposure,3 - Technicians and associate professionals
+3324,0.44458333333333333,0.09900021043748677,0.5666666666666667,6,1,Trade Brokers,Exposed: Gradient 2,3 - Technicians and associate professionals
+3331,0.5725,0.08975661535508124,0.45999999999999996,5,1,Clearing and Forwarding Aents,Exposed: Gradient 3,3 - Technicians and associate professionals
+3332,0.47785714285714287,0.14112220303862955,0.5071428571428571,7,1,Conference and Event Planners,Exposed: Gradient 2,3 - Technicians and associate professionals
+3333,0.38999999999999996,0.08814760348415607,0.45,6,1,Employment agents and contractors,Minimal Exposure,3 - Technicians and associate professionals
+3334,0.35214285714285715,0.0878852065128684,0.37857142857142856,7,1,Real Estate Agents and Property Managers,Minimal Exposure,3 - Technicians and associate professionals
+3339,0.445,0.12353137253345807,0.525,6,1,Business Services Agents Not Elsewhere Classified,Exposed: Gradient 2,3 - Technicians and associate professionals
+3341,0.42874999999999996,0.1130237806835358,0.4083333333333334,6,1,Office Supervisors,Exposed: Gradient 2,3 - Technicians and associate professionals
+3342,0.5503571428571429,0.12777281736403426,0.6428571428571429,7,1,Legal Secretaries,Exposed: Gradient 3,3 - Technicians and associate professionals
+3343,0.53625,0.14419109344398298,0.575,8,1,Administrative and Executive Secretaries,Exposed: Gradient 3,3 - Technicians and associate professionals
+3344,0.5303125,0.11003601277374085,0.6125,8,1,Medical Secretaries,Exposed: Gradient 3,3 - Technicians and associate professionals
+3351,0.3209375,0.14448144653503836,0.325,8,1,Customs and Border Inspectors,Minimal Exposure,3 - Technicians and associate professionals
+3352,0.49312500000000004,0.12478940593389065,0.4625,4,1,Government Tax and Excise Officials,Exposed: Gradient 2,3 - Technicians and associate professionals
+3353,0.4525,0.06910137480542627,0.4875,4,1,Government Social Benefits Officials,Exposed: Gradient 2,3 - Technicians and associate professionals
+3354,0.4305,0.07446475676452587,0.63,5,1,Government Licensing Officials,Exposed: Gradient 2,3 - Technicians and associate professionals
+3355,0.23291666666666666,0.06600031565581083,0.19999999999999998,6,1,Police Inspectors and Detectives,Not Exposed,3 - Technicians and associate professionals
+3359,0.36,0.10033277962194939,0.4125,4,1,Government Regulatory AssociatePprofessionals Not Elsewhere Classified,Minimal Exposure,3 - Technicians and associate professionals
+3411,0.39075000000000004,0.1357389754066401,0.389,10,1,Legal and Related Associate Professionals,Exposed: Gradient 1,3 - Technicians and associate professionals
+3412,0.3285,0.1258371964086931,0.29,10,1,Social Work Associate Professionals,Minimal Exposure,3 - Technicians and associate professionals
+3413,0.12050000000000001,0.07014271166700073,0.21666666666666667,6,1,Religious Associate Professionals,Not Exposed,3 - Technicians and associate professionals
+3421,0.22825,0.11243664882946308,0.25625,8,1,Athletes and Sports Players,Not Exposed,3 - Technicians and associate professionals
+3422,0.3740909090909091,0.12092493915272776,0.36363636363636365,11,1,"Sports Coaches, Instructors and Officials",Minimal Exposure,3 - Technicians and associate professionals
+3423,0.24583333333333335,0.0673362210601892,0.3833333333333333,6,1,Fitness and Recreation Instructors and Programme Leaders,Not Exposed,3 - Technicians and associate professionals
+3431,0.3903125,0.11817388444273849,0.35,8,1,Photographers,Exposed: Gradient 1,3 - Technicians and associate professionals
+3432,0.36725,0.0774995519700311,0.38,10,1,Interior Designers and Decorators,Minimal Exposure,3 - Technicians and associate professionals
+3433,0.37027777777777776,0.20104587646714975,0.4444444444444444,9,1,"Gallery, Museum and Library Technicians",Exposed: Gradient 1,3 - Technicians and associate professionals
+3434,0.2505,0.06089380555980678,0.26,10,1,Chefs,Not Exposed,3 - Technicians and associate professionals
+3511,0.4290625,0.13353662887013434,0.5375,8,1,Information and Communications Technology Operations Technicians,Exposed: Gradient 2,3 - Technicians and associate professionals
+3512,0.4702777777777778,0.18856549112826673,0.4555555555555555,9,1,Information and Communications Technology User Support Technicians,Exposed: Gradient 2,3 - Technicians and associate professionals
+3513,0.43,0.08348652585896722,0.43333333333333335,6,1,Computer Network and Systems Technicians,Exposed: Gradient 2,3 - Technicians and associate professionals
+3514,0.5285714285714286,0.12489042816652941,0.4214285714285714,7,1,Web Technicians,Exposed: Gradient 3,3 - Technicians and associate professionals
+3521,0.35178571428571426,0.11124966559607312,0.36428571428571427,7,1,Broadcasting and Audio-visual Technicians,Minimal Exposure,3 - Technicians and associate professionals
+3522,0.453,0.03615936946352908,0.35,5,1,Telecommunications Engineering Technicians,Minimal Exposure,3 - Technicians and associate professionals
+4110,0.595,0.10261752843865003,0.68125,8,1,General Office Clerks,Exposed: Gradient 4,4 - Clerical support workers
+4120,0.5765625,0.10398263505440292,0.6375,8,1,Secretaries (general),Exposed: Gradient 3,4 - Clerical support workers
+4131,0.6521428571428572,0.052765767221525275,0.7714285714285715,7,1,Typists and Word Processing Operators,Exposed: Gradient 4,4 - Clerical support workers
+4132,0.7,0.02855914914698963,0.7,5,1,Data Entry Clerks,Exposed: Gradient 4,4 - Clerical support workers
+4211,0.58225,0.09179528855012112,0.725,6,1,Bank Tellers and Related Clerks,Exposed: Gradient 3,4 - Clerical support workers
+4212,0.446,0.18675351402316367,0.5199999999999999,5,1,"Bookmakers, Croupiers and Related Gaming Workers",Exposed: Gradient 2,4 - Clerical support workers
+4213,0.4805,0.05874734036533064,0.52,5,1,Pawnbrokers and Money-lenders,Exposed: Gradient 2,4 - Clerical support workers
+4214,0.426,0.0730924072664186,0.57,5,1,Debt Collectors and Related Workers,Exposed: Gradient 2,4 - Clerical support workers
+4221,0.555125,0.0731347826179269,0.74375,8,1,Travel Consultants and Clerks,Exposed: Gradient 3,4 - Clerical support workers
+4222,0.5808333333333334,0.05791516784631351,0.725,6,1,Contact Centre Information Clerks,Exposed: Gradient 3,4 - Clerical support workers
+4223,0.5372,0.1461307633593968,0.58,5,1,Telephone Switchboard Operators,Exposed: Gradient 3,4 - Clerical support workers
+4224,0.5141666666666667,0.06968679932383176,0.6777777777777777,9,1,Hotel Receptionists,Exposed: Gradient 3,4 - Clerical support workers
+4225,0.5740000000000001,0.08699137888319738,0.72,5,1,Inquiry Clerks,Exposed: Gradient 3,4 - Clerical support workers
+4226,0.5650000000000001,0.16537835408541227,0.64,5,1,Receptionists (general),Exposed: Gradient 3,4 - Clerical support workers
+4227,0.5475,0.15502015997927496,0.71,5,1,Survey and Market Research Interviewers,Exposed: Gradient 3,4 - Clerical support workers
+4229,0.41558333333333336,0.1322915026245702,0.5416666666666666,6,1,Client Information Workers Not Elsewhere Classified,Exposed: Gradient 2,4 - Clerical support workers
+4311,0.64,0.07245688373094715,0.6900000000000001,5,1,Accounting and Bookkeeping Clerks,Exposed: Gradient 4,4 - Clerical support workers
+4312,0.6395000000000001,0.02426417111710182,0.6599999999999999,5,1,"Statistical, Finance and Insurance Clerks",Exposed: Gradient 4,4 - Clerical support workers
+4313,0.6065,0.07645668708491099,0.62,5,1,Payroll Clerks,Exposed: Gradient 4,4 - Clerical support workers
+4321,0.369,0.062113806838737545,0.35,5,1,Stock Clerks,Minimal Exposure,4 - Clerical support workers
+4322,0.43550000000000005,0.06340346993658945,0.6,5,1,Production Clerks,Exposed: Gradient 2,4 - Clerical support workers
+4323,0.49499999999999994,0.09638464608017193,0.5499999999999999,6,1,Transport Clerks,Exposed: Gradient 3,4 - Clerical support workers
+4411,0.4604166666666667,0.17782306280869944,0.39999999999999997,6,1,Library Clerks,Exposed: Gradient 2,4 - Clerical support workers
+4412,0.4075,0.15343293866268307,0.475,4,1,Mail Carriers and Sorting Clerks,Exposed: Gradient 2,4 - Clerical support workers
+4413,0.5145000000000001,0.20222512207933024,0.65,5,1,"Coding, Proofreading and Related Clerks",Exposed: Gradient 3,4 - Clerical support workers
+4414,0.5833333333333334,0.07767453465154024,0.7166666666666667,3,1,Scribes and Related Workers,Exposed: Gradient 3,4 - Clerical support workers
+4415,0.3686,0.16637059535867513,0.43999999999999995,5,1,Filing and Copying Clerks,Exposed: Gradient 1,4 - Clerical support workers
+4416,0.6050000000000001,0.08919781387455634,0.7071428571428572,7,1,Personnel Clerks,Exposed: Gradient 4,4 - Clerical support workers
+4419,0.627875,0.02607161611152378,0.725,4,1,Clerical Support Workers Not Elsewhere Classified,Exposed: Gradient 4,4 - Clerical support workers
+5111,0.21522727272727274,0.10456729020978875,0.3090909090909091,11,1,Travel Attendants and Travel Stewards,Not Exposed,5 - Service and sales workers
+5112,0.24925000000000003,0.16657101421849413,0.37,10,1,Transport Conductors,Minimal Exposure,5 - Service and sales workers
+5113,0.3188888888888889,0.10655919064590867,0.41111111111111115,9,1,Travel Guides,Minimal Exposure,5 - Service and sales workers
+5120,0.184,0.06496152707564685,0.19285714285714287,7,1,Cooks,Not Exposed,5 - Service and sales workers
+5131,0.28071428571428575,0.1575708457442919,0.32142857142857145,7,1,Waiters,Minimal Exposure,5 - Service and sales workers
+5132,0.261,0.12110142672799341,0.22000000000000003,10,1,Bartenders,Not Exposed,5 - Service and sales workers
+5141,0.17312500000000003,0.17921331065042495,0.225,8,1,Hairdressers,Not Exposed,5 - Service and sales workers
+5142,0.18312499999999998,0.1874059287825685,0.21875,8,1,Beauticians and Related Workers,Not Exposed,5 - Service and sales workers
+5151,0.220125,0.10065739274532055,0.24375,8,1,"Cleaning and Housekeeping Supervisors in Offices, Hotels and Other Establishments",Not Exposed,5 - Service and sales workers
+5152,0.19944444444444442,0.10362023343815523,0.2222222222222222,9,1,Domestic Housekeepers,Not Exposed,5 - Service and sales workers
+5153,0.26625,0.15563235065830164,0.3625,8,1,Building Caretakers,Minimal Exposure,5 - Service and sales workers
+5161,0.2966666666666667,0.16323806745568467,0.5333333333333333,6,1,"Astrologers, Fortune-tellers and Related Workers",Minimal Exposure,5 - Service and sales workers
+5162,0.21783333333333332,0.046277244227950036,0.13333333333333333,3,1,Companions and Valets,Not Exposed,5 - Service and sales workers
+5163,0.1665,0.17410715091575074,0.10833333333333334,6,1,Undertakers and Embalmers,Not Exposed,5 - Service and sales workers
+5164,0.14072222222222222,0.055806647851707095,0.15555555555555556,9,1,Pet Groomers and Animal Care Workers,Not Exposed,5 - Service and sales workers
+5165,0.205,0.03420526275297413,0.3833333333333333,6,1,Driving Instructors,Not Exposed,5 - Service and sales workers
+5169,0.21333333333333335,0.07285830998131465,0.11666666666666668,3,1,Personal Services Workers Not Elsewhere Classified,Not Exposed,5 - Service and sales workers
+5211,0.3496428571428571,0.16925343775083623,0.39285714285714285,7,1,Stall and Market Salespersons,Exposed: Gradient 1,5 - Service and sales workers
+5212,0.2245,0.11007667782050837,0.18,5,1,Street Food Salespersons,Not Exposed,5 - Service and sales workers
+5221,0.4307142857142857,0.09773171488947738,0.6071428571428571,7,1,Shopkeepers,Exposed: Gradient 2,5 - Service and sales workers
+5222,0.3603125,0.12351574147798788,0.425,8,1,Shop Supervisors,Minimal Exposure,5 - Service and sales workers
+5223,0.38449999999999995,0.15694744343250705,0.44000000000000006,5,1,Shop Sales Assistants,Exposed: Gradient 1,5 - Service and sales workers
+5230,0.394375,0.13996651385242112,0.25625000000000003,8,1,Cashiers and Ticket Clerks,Exposed: Gradient 1,5 - Service and sales workers
+5241,0.248,0.05619163638834519,0.09,5,1,Fashion and Other Models,Not Exposed,5 - Service and sales workers
+5242,0.4175,0.11377060252982756,0.54,5,1,Sales Demonstrators,Exposed: Gradient 2,5 - Service and sales workers
+5243,0.4585714285714286,0.18442397452867232,0.4785714285714286,7,1,Door-to-door Salespersons,Exposed: Gradient 2,5 - Service and sales workers
+5244,0.6115625,0.10148836580050515,0.69375,8,1,Contact Centre Salespersons,Exposed: Gradient 4,5 - Service and sales workers
+5245,0.24062499999999998,0.16266612387692422,0.275,8,1,Service Station Attendants,Minimal Exposure,5 - Service and sales workers
+5246,0.238125,0.13352200193226582,0.18571428571428572,8,1,Food Service Counter Attendants,Not Exposed,5 - Service and sales workers
+5311,0.1905,0.09316766759833739,0.21250000000000002,8,1,Child Care Workers,Not Exposed,5 - Service and sales workers
+5312,0.24107142857142858,0.14205234615316656,0.36428571428571427,7,1,Teachers' Aides,Not Exposed,5 - Service and sales workers
+5321,0.14083333333333334,0.05569260872563492,0.10000000000000002,6,1,Health Care Assistants,Not Exposed,5 - Service and sales workers
+5322,0.24650000000000002,0.17872709643476,0.3111111111111111,9,1,Home-based Personal Care Workers,Minimal Exposure,5 - Service and sales workers
+5329,0.15041666666666667,0.0313215846768114,0.125,6,1,Personal Care Workers in Health Services Not Elsewhere Classified,Not Exposed,5 - Service and sales workers
+5411,0.18333333333333335,0.09883909482925603,0.20833333333333334,6,1,Fire Fighters,Not Exposed,5 - Service and sales workers
+5412,0.139375,0.03381167204778058,0.15000000000000002,4,1,Police Officers,Not Exposed,5 - Service and sales workers
+5413,0.1375,0.041932485418030414,0.1285714285714286,7,1,Prison Guards,Not Exposed,5 - Service and sales workers
+5414,0.2025,0.08722098371378299,0.16666666666666666,6,1,Security Guards,Not Exposed,5 - Service and sales workers
+5419,0.19724999999999998,0.05425921580708663,0.21000000000000002,5,1,Protective Services Workers Not Elsewhere Classified,Not Exposed,5 - Service and sales workers
+6111,0.17613636363636365,0.12481668376244638,0.16818181818181818,11,1,Field Crop and Vegetable Growers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6112,0.17113636363636364,0.11332124489897975,0.18181818181818182,11,1,Tree and Shrub Crop Growers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6113,0.18416666666666667,0.11155070867574353,0.15,12,1,"Gardeners, Horticultural and Nursery Growers",Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6114,0.17236363636363636,0.1246921891918437,0.17272727272727273,11,1,Mixed Crop Growers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6121,0.16999999999999998,0.10486101913167414,0.1769230769230769,13,1,Livestock and Dairy Producers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6122,0.18916666666666668,0.09895093672516637,0.19999999999999998,12,1,Poultry Producers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6123,0.22157142857142856,0.10694329828287064,0.32857142857142857,7,1,Apiarists and Sericulturists,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6129,0.2,0.13511424564049493,0.23888888888888887,9,1,Animal Producers Not Elsewhere Classified,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6130,0.19,0.11421835812746273,0.24500000000000002,10,1,Mixed Crop and Animal Producers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6210,0.1189,0.04941367332137038,0.14,10,1,Forestry and Related Workers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6221,0.22475,0.15456233010953507,0.22000000000000003,10,1,Aquaculture Workers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6222,0.17475000000000002,0.09542449021783314,0.23500000000000001,10,1,Inland and Coastal Waters Fishery Workers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6223,0.1755,0.06836528724433183,0.23888888888888887,9,1,Deep-sea Fishery Workers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6224,0.08975,0.03211794669651222,0.09,5,1,Hunters and Trappers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6310,0.12571428571428572,0.05400066137161126,0.13571428571428573,7,1,Subsistence Crop Farmers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6320,0.12695833333333334,0.039203697838882806,0.10833333333333334,12,1,Subsistence Livestock Farmers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6330,0.11852777777777779,0.047747454847818276,0.12777777777777777,9,1,Subsistence Mixed Crop and Livestock Farmers,Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+6340,0.1175,0.05447804275905241,0.1,8,1,"Subsistence Fishers, Hunters, Trappers and Gatherers",Not Exposed,"6 - Skilled agricultural, forestry and fishery workers"
+7111,0.13699999999999998,0.07041010817583888,0.15,7,1,House Builders,Not Exposed,7 - Craft and related trades workers
+7112,0.08866666666666667,0.012003471720020555,0.10000000000000002,3,1,Bricklayers and Related Workers,Not Exposed,7 - Craft and related trades workers
+7113,0.10942857142857143,0.024439429500004994,0.12142857142857144,7,1,"Stonemasons, Stone Cutters, Splitters and Carvers",Not Exposed,7 - Craft and related trades workers
+7114,0.10350000000000001,0.02577547283756401,0.09,5,1,"Concrete Placers, Concrete Finishers and Related Workers",Not Exposed,7 - Craft and related trades workers
+7115,0.1295,0.023143573622066232,0.13,5,1,Carpenters and Joiners,Not Exposed,7 - Craft and related trades workers
+7119,0.09366666666666668,0.012209968604928245,0.08333333333333333,3,1,Building Frame and Related Trades Workers Not Elsewhere Classified,Not Exposed,7 - Craft and related trades workers
+7121,0.12625,0.07698620006208907,0.10833333333333334,6,1,Roofers,Not Exposed,7 - Craft and related trades workers
+7122,0.101875,0.015728821740147395,0.10000000000000002,4,1,Floor Layers and Tile Setters,Not Exposed,7 - Craft and related trades workers
+7123,0.1142857142857143,0.013206239506565144,0.12142857142857144,7,1,Plasterers,Not Exposed,7 - Craft and related trades workers
+7124,0.12708333333333333,0.01691276638124783,0.125,6,1,Insulation Workers,Not Exposed,7 - Craft and related trades workers
+7125,0.136875,0.004269562819149826,0.1,4,1,Glaziers,Not Exposed,7 - Craft and related trades workers
+7126,0.15150000000000002,0.07404812624232972,0.16,5,1,Plumbers and Pipe Fitters,Not Exposed,7 - Craft and related trades workers
+7127,0.206875,0.11418871441609281,0.17500000000000002,4,1,Air Conditioning and Refrigeration Mechanics,Not Exposed,7 - Craft and related trades workers
+7131,0.126,0.039393844696855876,0.12000000000000002,5,1,Painters and Related Workers,Not Exposed,7 - Craft and related trades workers
+7132,0.11916666666666666,0.0014433756729740667,0.13333333333333333,3,1,Spray Painters and Varnishers,Not Exposed,7 - Craft and related trades workers
+7133,0.09166666666666666,0.010103629710818457,0.13333333333333333,3,1,Building Structure Cleaners,Not Exposed,7 - Craft and related trades workers
+7211,0.1337142857142857,0.010483547200483324,0.10714285714285714,7,1,Metal Moulders and Coremakers,Not Exposed,7 - Craft and related trades workers
+7212,0.1303125,0.04984686370704351,0.10625000000000001,8,1,Welders and Flame Cutters,Not Exposed,7 - Craft and related trades workers
+7213,0.2064285714285714,0.09230674793472966,0.21428571428571427,7,1,Sheet Metal Workers,Not Exposed,7 - Craft and related trades workers
+7214,0.11083333333333334,0.016020819787597226,0.11666666666666668,6,1,Structural Metal Preparers and Erectors,Not Exposed,7 - Craft and related trades workers
+7215,0.12625,0.025872282465990517,0.14166666666666666,6,1,Riggers and Cable Splicers,Not Exposed,7 - Craft and related trades workers
+7221,0.16553571428571429,0.04850825285699429,0.15714285714285717,7,1,"Blacksmiths, Hammersmiths and Forging Press Workers",Not Exposed,7 - Craft and related trades workers
+7222,0.20454545454545456,0.10352426153937405,0.21363636363636365,11,1,Toolmakers and Related Workers,Not Exposed,7 - Craft and related trades workers
+7223,0.18166666666666664,0.05039014453905313,0.16666666666666666,6,1,Metal Working Machine Tool Setters and  Operators,Not Exposed,7 - Craft and related trades workers
+7224,0.16857142857142857,0.0494523580255352,0.16428571428571428,7,1,"Metal Polishers, Wheel Grinders and Tool Sharpeners",Not Exposed,7 - Craft and related trades workers
+7231,0.17796875,0.03553128337415194,0.14375000000000002,8,1,Motor Vehicle Mechanics and Repairers,Not Exposed,7 - Craft and related trades workers
+7232,0.194875,0.0740130666016331,0.165,10,1,Aircraft Engine Mechanics and Repairers,Not Exposed,7 - Craft and related trades workers
+7233,0.17392857142857143,0.04187921975895739,0.19285714285714287,7,1,Agricultural and Industrial Machinery Mechanics and Repairers,Not Exposed,7 - Craft and related trades workers
+7234,0.13125,0.020841665000666337,0.09166666666666667,6,1,Bicycle and Related Repairers,Not Exposed,7 - Craft and related trades workers
+7311,0.21406250000000002,0.07529699717844603,0.17916666666666667,12,1,Precision-instrument Makers and Repairers,Not Exposed,7 - Craft and related trades workers
+7312,0.14031818181818181,0.016011359603844897,0.10454545454545454,11,1,Musical Instrument Makers and Tuners,Not Exposed,7 - Craft and related trades workers
+7313,0.17554545454545456,0.052559706308851525,0.14545454545454548,11,1,Jewellery and Precious Metal Workers,Not Exposed,7 - Craft and related trades workers
+7314,0.17795454545454545,0.07214411082876222,0.19090909090909092,11,1,Potters and Related Workers,Not Exposed,7 - Craft and related trades workers
+7315,0.18653846153846151,0.05689480846939579,0.21923076923076923,13,1,"Glass Makers, Cutters, Grinders and Finishers",Not Exposed,7 - Craft and related trades workers
+7316,0.184,0.084281522292849,0.24285714285714285,14,1,"Sign Writers, Decorative Painters, Engravers and Etchers",Not Exposed,7 - Craft and related trades workers
+7317,0.1355681818181818,0.012110992377325496,0.10454545454545455,11,1,"Handicraft Workers in Wood, Basketry and Related Materials",Not Exposed,7 - Craft and related trades workers
+7318,0.1332142857142857,0.029260576185053476,0.10357142857142858,14,1,"Handicraft Workers in Textile, Leather and Related Materials",Not Exposed,7 - Craft and related trades workers
+7321,0.38207142857142856,0.21513957263666236,0.2571428571428572,7,1,Pre-press Technicians,Exposed: Gradient 1,7 - Craft and related trades workers
+7322,0.24944444444444447,0.10575456386264272,0.2222222222222222,9,1,Printers,Not Exposed,7 - Craft and related trades workers
+7323,0.22,0.08751190395216717,0.17142857142857143,7,1,Print Finishing and Binding Workers,Not Exposed,7 - Craft and related trades workers
+7411,0.19125,0.056394655268537125,0.175,8,1,Building and Related Electricians,Not Exposed,7 - Craft and related trades workers
+7412,0.17450000000000002,0.05382920520807763,0.1357142857142857,7,1,Electrical Mechanics and Fitters,Not Exposed,7 - Craft and related trades workers
+7413,0.15375000000000003,0.07886301414478147,0.14166666666666666,6,1,Electrical Line Installers and Repairers,Not Exposed,7 - Craft and related trades workers
+7421,0.2475,0.12937952890623772,0.25,9,1,Electronics Mechanics and Servicers,Not Exposed,7 - Craft and related trades workers
+7422,0.2389285714285714,0.14031851522263805,0.15714285714285717,7,1,Information and Communications Technology Installers and Servicers,Not Exposed,7 - Craft and related trades workers
+7511,0.1253125,0.029593601504379296,0.1375,8,1,"Butchers, Fishmongers and Related Food Preparers",Not Exposed,7 - Craft and related trades workers
+7512,0.1690625,0.0772742969187408,0.1375,8,1,"Bakers, Pastry-cooks and Confectionery Makers",Not Exposed,7 - Craft and related trades workers
+7513,0.215,0.17161522576474883,0.1625,8,1,Dairy Products Makers,Not Exposed,7 - Craft and related trades workers
+7514,0.148,0.040750766863949926,0.1,5,1,"Fruit, Vegetable and Related Preservers",Not Exposed,7 - Craft and related trades workers
+7515,0.3055,0.157046967496988,0.29,5,1,Food and Beverage Tasters and Graders,Minimal Exposure,7 - Craft and related trades workers
+7516,0.14350000000000002,0.055946402922797456,0.14,5,1,Tobacco Preparers and Tobacco Products Makers,Not Exposed,7 - Craft and related trades workers
+7521,0.22453125000000002,0.15082205915178892,0.20625,8,1,Wood Treaters,Not Exposed,7 - Craft and related trades workers
+7522,0.16229166666666667,0.06358270532673696,0.14166666666666666,6,1,Cabinet-makers and Related Workers,Not Exposed,7 - Craft and related trades workers
+7523,0.21625000000000003,0.15880609245239935,0.1416666666666667,6,1,Woodworking Machine Tool Setters and Operators,Not Exposed,7 - Craft and related trades workers
+7531,0.1459090909090909,0.054040178655246025,0.1272727272727273,11,1,"Tailors, Dressmakers, Furriers and Hatters",Not Exposed,7 - Craft and related trades workers
+7532,0.168125,0.04496368484171925,0.2791666666666667,12,1,Garment and Related Patternmakers and Cutters,Not Exposed,7 - Craft and related trades workers
+7533,0.12175000000000001,0.018443402368030982,0.125,12,1,"Sewing, Embroidery and Related Workers",Not Exposed,7 - Craft and related trades workers
+7534,0.17695833333333333,0.09158514625828533,0.1625,12,1,Upholsterers and Related Workers,Not Exposed,7 - Craft and related trades workers
+7535,0.10961538461538461,0.02870188281146512,0.11153846153846156,13,1,"Pelt Dressers, Tanners and Fellmongers",Not Exposed,7 - Craft and related trades workers
+7536,0.16903846153846155,0.062019305307051215,0.15384615384615385,13,1,Shoemakers and Related Workers,Not Exposed,7 - Craft and related trades workers
+7541,0.15637500000000001,0.08960243630007553,0.18333333333333335,12,1,Underwater Divers,Not Exposed,7 - Craft and related trades workers
+7542,0.11963636363636364,0.04873350536801704,0.18636363636363634,11,1,Shotfirers and Blasters,Not Exposed,7 - Craft and related trades workers
+7543,0.3086111111111111,0.10964510299649095,0.39999999999999997,9,1,Product Graders and Testers (except Foods and Beverages),Minimal Exposure,7 - Craft and related trades workers
+7544,0.1332142857142857,0.037185186502666556,0.14285714285714285,7,1,Fumigators and Other Pest and Weed Controllers,Not Exposed,7 - Craft and related trades workers
+7549,0.14375,0.008838834764831842,0.07500000000000001,2,1,Craft and Related Workers not Elsewhere Classified,Not Exposed,7 - Craft and related trades workers
+8111,0.1725,0.10867094827965754,0.23888888888888887,9,1,Miners and Quarriers,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8112,0.20800000000000002,0.10371435130523968,0.21000000000000002,10,1,Mineral and Stone Processing Plant Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8113,0.1875,0.12089366310017154,0.215,10,1,Well Drillers and Borers and Related Workers,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8114,0.22635,0.11286374528607496,0.215,10,1,"Cement, Stone and Other Mineral Products Machine Operators",Not Exposed,"8 - Plant and machine operators, and assemblers"
+8121,0.265,0.09834342159711837,0.2375,8,1,Metal Processing Plant Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8122,0.20484375000000002,0.0379992804208185,0.19375,8,1,"Metal Finishing, Plating and Coating Machine Operators",Not Exposed,"8 - Plant and machine operators, and assemblers"
+8131,0.24416666666666664,0.0736489420607429,0.25,6,1,Chemical Products Plant and Machine Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8132,0.2715625,0.058766145197967266,0.3125,8,1,Photographic Products Machine Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8141,0.18225,0.04520370560031557,0.17500000000000002,6,1,Rubber Products Machine Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8142,0.17500000000000002,0.05196152422706631,0.20285714285714285,7,1,Plastic Products Machine Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8143,0.18083333333333332,0.01876388374866284,0.15,3,1,Paper Products Machine Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8151,0.15497916666666667,0.018368221796616492,0.11666666666666665,12,1,"Fibre Preparing, Spinning and Winding Machine Operators",Not Exposed,"8 - Plant and machine operators, and assemblers"
+8152,0.165,0.028394541729001372,0.14615384615384616,13,1,Weaving and Knitting Machine Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8153,0.1478125,0.03236062146233554,0.15,8,1,Sewing Machine Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8154,0.20979166666666668,0.1455766680752063,0.21666666666666667,12,1,"Bleaching, Dyeing and Fabric Cleaning Machine Operators",Not Exposed,"8 - Plant and machine operators, and assemblers"
+8155,0.14600000000000002,0.023547823678633235,0.14545454545454548,11,1,Fur and Leather Preparing Machine Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8156,0.1625,0.022220486043288964,0.13333333333333333,3,1,Shoemaking and Related Machine Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8157,0.15638888888888888,0.02792599346686006,0.12222222222222223,9,1,Laundry Machine Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8159,0.15750000000000003,0.013462912017836262,0.18,5,1,"Textile, Fur and Leather Products Machine Operators Not Elsewhere Classified",Not Exposed,"8 - Plant and machine operators, and assemblers"
+8160,0.15321428571428572,0.029057209579920577,0.15714285714285717,7,1,Food and Related Products Machine Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8171,0.2753125,0.13896580707394998,0.35624999999999996,8,1,Pulp and Papermaking Plant Operators,Minimal Exposure,"8 - Plant and machine operators, and assemblers"
+8172,0.144,0.05176871642217914,0.18,5,1,Wood Processing Plant Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8181,0.17350000000000002,0.05669757122958031,0.1423076923076923,13,1,Glass and Ceramics Plant Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8182,0.195,0.042646805273079964,0.2285714285714286,7,1,Steam Engine and Boiler Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8183,0.2225,0.007500000000000007,0.2333333333333333,3,1,"Packing, Bottling and Labelling Machine Operators",Not Exposed,"8 - Plant and machine operators, and assemblers"
+8211,0.2695,0.17217723426748383,0.31,5,1,Mechanical Machinery Assemblers,Minimal Exposure,"8 - Plant and machine operators, and assemblers"
+8212,0.27675,0.19220269248894511,0.36,5,1,Electrical and Electronic Equipment Assemblers,Minimal Exposure,"8 - Plant and machine operators, and assemblers"
+8219,0.319,0.16686072036282237,0.35,5,1,Assemblers Not Elsewhere Classified,Minimal Exposure,"8 - Plant and machine operators, and assemblers"
+8311,0.1985,0.07639535326183132,0.26,5,1,Locomotive Engine Drivers,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8312,0.175,0.03921096785339529,0.22000000000000003,5,1,"Railway Brake, Signal and Switch Operators",Not Exposed,"8 - Plant and machine operators, and assemblers"
+8321,0.24975,0.17182931210943028,0.26,5,1,Motorcycle Drivers,Minimal Exposure,"8 - Plant and machine operators, and assemblers"
+8322,0.27625,0.23170948559410706,0.23750000000000002,8,1,"Car, Taxi and Van Drivers",Exposed: Gradient 1,"8 - Plant and machine operators, and assemblers"
+8331,0.17857142857142858,0.06453127702351562,0.19999999999999998,7,1,Bus and Tram Drivers,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8332,0.245,0.22487218591902375,0.2333333333333333,6,1,Heavy Truck and Lorry Drivers,Minimal Exposure,"8 - Plant and machine operators, and assemblers"
+8341,0.1228125,0.026606843238964988,0.11875000000000001,8,1,Mobile Farm and Forestry Plant Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8342,0.13142857142857142,0.017669249586566516,0.12142857142857144,7,1,Earthmoving and Related Plant Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8343,0.17514285714285713,0.03068212602058171,0.1642857142857143,7,1,"Crane, hoist and related plant operators",Not Exposed,"8 - Plant and machine operators, and assemblers"
+8344,0.198,0.100364959024552,0.32,5,1,Lifting Truck Operators,Not Exposed,"8 - Plant and machine operators, and assemblers"
+8350,0.1425,0.02202271554554525,0.125,6,1,Ships' Deck Crews and Related Workers,Not Exposed,"8 - Plant and machine operators, and assemblers"
+9111,0.14342857142857143,0.0847950610646185,0.14285714285714285,7,1,Domestic Cleaners and Helpers,Not Exposed,9 - Elementary occupations
+9112,0.11875000000000001,0.02313907229485804,0.1,4,1,"Cleaners and Helpers in Offices, Hotels and Other Establishments",Not Exposed,9 - Elementary occupations
+9121,0.14375,0.02688710967483613,0.1125,4,1,Hand Launderers and Pressers,Not Exposed,9 - Elementary occupations
+9122,0.08895833333333332,0.009301097605480048,0.10833333333333334,6,1,Vehicle Cleaners,Not Exposed,9 - Elementary occupations
+9123,0.11133333333333333,0.0336204302966713,0.10000000000000002,3,1,Window Cleaners,Not Exposed,9 - Elementary occupations
+9129,0.10208333333333335,0.014354151548129431,0.11666666666666668,6,1,Other Cleaning Workers,Not Exposed,9 - Elementary occupations
+9211,0.0914375,0.022271759023480834,0.1,8,1,Crop Farm Labourers,Not Exposed,9 - Elementary occupations
+9212,0.11850000000000001,0.02815532315961268,0.11500000000000002,10,1,Livestock Farm Labourers,Not Exposed,9 - Elementary occupations
+9213,0.11272727272727273,0.03208298897886824,0.09636363636363637,11,1,Mixed Crop and Livestock Farm Labourers,Not Exposed,9 - Elementary occupations
+9214,0.11577777777777779,0.018731843060533163,0.1,9,1,Garden and Horticultural Labourers,Not Exposed,9 - Elementary occupations
+9215,0.09406250000000001,0.018507599790356388,0.10625,8,1,Forestry Labourers,Not Exposed,9 - Elementary occupations
+9216,0.11053571428571428,0.031588641343127784,0.1,7,1,Fishery and Aquaculture Labourers,Not Exposed,9 - Elementary occupations
+9311,0.10885714285714286,0.01831373411248665,0.1285714285714286,7,1,Mining and Quarrying Labourers,Not Exposed,9 - Elementary occupations
+9312,0.093,0.02354516935594221,0.1,5,1,Civil Engineering Labourers,Not Exposed,9 - Elementary occupations
+9313,0.09391666666666666,0.017636373398935125,0.10000000000000002,6,1,Building Construction Labourers,Not Exposed,9 - Elementary occupations
+9321,0.1975,0.04630064794363033,0.13333333333333333,3,1,Hand Packers,Not Exposed,9 - Elementary occupations
+9329,0.12,0.015942605391424152,0.1,4,1,Manufacturing Labourers Not Elsewhere Classified,Not Exposed,9 - Elementary occupations
+9331,0.20700000000000002,0.07965550828411054,0.15,5,1,Hand and Pedal Vehicle Drivers,Not Exposed,9 - Elementary occupations
+9332,0.13244444444444445,0.08285433167781742,0.1111111111111111,9,1,Drivers of Animal-drawn Vehicles and Machinery,Not Exposed,9 - Elementary occupations
+9333,0.14083333333333334,0.025625508125043432,0.16666666666666666,6,1,Freight Handlers,Not Exposed,9 - Elementary occupations
+9334,0.2046875,0.10148396688991954,0.19999999999999998,8,1,Shelf Fillers,Not Exposed,9 - Elementary occupations
+9411,0.18305555555555555,0.04639803635691685,0.12222222222222223,9,1,Fast Food Preparers,Not Exposed,9 - Elementary occupations
+9412,0.12958333333333333,0.019647943064521195,0.08333333333333333,6,1,Kitchen Helpers,Not Exposed,9 - Elementary occupations
+9510,0.17875000000000002,0.08645808232895291,0.28125,8,1,Street and Related Service Workers,Not Exposed,9 - Elementary occupations
+9520,0.2045,0.10367316431941295,0.16,5,1,Street Vendors (excluding Food),Not Exposed,9 - Elementary occupations
+9611,0.09187500000000001,0.017485112715297742,0.1,4,1,Garbage and Recycling Collectors,Not Exposed,9 - Elementary occupations
+9612,0.18125,0.11200167409463128,0.14166666666666666,6,1,Refuse Sorters,Not Exposed,9 - Elementary occupations
+9613,0.094375,0.02756620817837182,0.1,4,1,Sweepers and Related Labourers,Not Exposed,9 - Elementary occupations
+9621,0.36999999999999994,0.1861988184710096,0.275,6,1,"Messengers, Package Deliverers and Luggage Porters",Exposed: Gradient 1,9 - Elementary occupations
+9622,0.11017857142857143,0.027636296440593858,0.09285714285714286,7,1,Odd Job Persons,Not Exposed,9 - Elementary occupations
+9623,0.37678571428571433,0.21197835132053325,0.35714285714285715,7,1,Meter Readers and Vending-machine Collectors,Exposed: Gradient 1,9 - Elementary occupations
+9624,0.08916666666666667,0.03068658773253661,0.10833333333333334,6,1,Water and Firewood Collectors,Not Exposed,9 - Elementary occupations
+9629,0.2921875,0.13557705702978343,0.38125,8,1,Elementary Workers Not Elsewhere Classified,Minimal Exposure,9 - Elementary occupations
