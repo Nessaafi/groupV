@@ -1,380 +1,280 @@
 # EDA
 
-::: {.callout-tip}
-## Exploratory Data Analysis (EDA) Purpose
+Means computed on SHP data use the cross-sectional weights `wicss`, so that they represent the population of employees in Switzerland. Medians are simple (unweighted) medians. Only aggregated results are shown, as required by the SHP user contract.
 
-The goal of EDA is to:
+```{python}
+#| label: eda-setup
+#| output: false
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from scipy import stats
 
-1. **Understand** the structure and patterns in your data
-2. **Identify** relationships between variables
-3. **Detect** anomalies, outliers, and data quality issues
-4. **Generate** hypotheses for further analysis
-5. **Choose** appropriate statistical methods
+from analysis_data import ISCO1_LABELS, load_ilo
 
-Good EDA combines **visualizations** + **summary statistics** + **domain knowledge**.
-:::
+sns.set_theme(style="whitegrid")
 
-::: {.callout-important}
-## Interpretation is Key!
 
-**Creating plots is only half the work.** The most important part of EDA is **interpreting** what your visualizations reveal about the data.
-
-For **every plot** you create, you must:
-
-- **Describe** what the plot shows (patterns, trends, distributions)
-- **Explain** why these patterns matter for your research questions
-- **Connect** findings to your project goals and domain context
-- **Justify** subsequent analysis decisions based on these insights
-
-**A plot without interpretation is meaningless.** Your grade depends heavily on the quality of your interpretations, not just the number of plots you create.
-:::
+def weighted_mean(data, col, by):
+    # weighted mean of `col` in each group: sum(x * w) / sum(w)
+    data = data.copy()
+    data["x_w"] = data[col] * data["wicss"]
+    sums = data.groupby(by)[["x_w", "wicss"]].sum()
+    return sums["x_w"] / sums["wicss"]
+```
 
 ## Univariate Analysis
 
-Examine each variable individually to understand its distribution, central tendency, and spread.
+### AI exposure across occupations (ILO index)
 
-::: {.panel-tabset}
-
-## Distribution Plot
+We first describe the exposure index itself, before linking it to the SHP. @fig-ilo-major shows the 2025 exposure score of the 427 four-digit occupations, grouped by ISCO major group.
 
 ```{python}
-#| label: fig-performance-dist
-#| fig-cap: "Distribution of performance scores showing approximately normal distribution"
-# Code visibility controlled by format settings in report.qmd
+#| label: fig-ilo-major
+#| fig-cap: "Generative-AI exposure of the 427 ISCO-08 occupations, by major group (ILO 2025). Each box summarises the occupation mean scores of one major group."
+ilo4 = load_ilo(project_root, level=4)
+ilo4["isco1"] = ilo4["isco4"].str[0]
+ilo4["major_group"] = ilo4["isco1"] + " " + ilo4["isco1"].map(ISCO1_LABELS)
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
+# order the groups from most to least exposed
+order = ilo4.groupby("major_group")["exposure_mean_2025"].median().sort_values(ascending=False).index
 
-# Set publication-quality style
-sns.set_theme(style="whitegrid", context="notebook", 
-              palette="colorblind", font_scale=1.1)
-
-# Create dummy data for demonstration
-np.random.seed(42)
-dummy_performance = pd.DataFrame({
-    "instructor": np.random.choice(["Ilia", "Jane", "John"], size=200),
-    "performance": np.random.normal(0.90, 0.05, size=200).clip(0, 1)
-})
-
-# Create figure
-fig, ax = plt.subplots(figsize=(8, 5))
-
-# Histogram with KDE
-sns.histplot(data=dummy_performance, x="performance", kde=True, 
-             bins=30, color='steelblue', alpha=0.6, ax=ax,
-             edgecolor='black', linewidth=0.5)
-
-# Customize plot
-ax.set_title("Distribution of Student Performance Scores", 
-             fontsize=14, fontweight='bold', pad=15)
-ax.set_xlabel("Performance Score", fontsize=12)
-ax.set_ylabel("Frequency", fontsize=12)
-ax.grid(True, alpha=0.3, linestyle='--')
-
-# Add mean line
-mean_perf = dummy_performance["performance"].mean()
-ax.axvline(mean_perf, color='red', linestyle='--', linewidth=2, 
-           label=f'Mean = {mean_perf:.3f}')
-ax.legend(fontsize=10)
-
+plt.figure(figsize=(8, 4.5))
+sns.boxplot(data=ilo4, x="exposure_mean_2025", y="major_group", order=order, color="#9ecae1")
+plt.xlabel("Mean task exposure score, 2025 (0 = not exposed, 1 = fully exposed)")
+plt.ylabel("")
+plt.xlim(0, 1)
 plt.tight_layout()
 plt.show()
 ```
 
-## Summary Statistics
+Clerical support workers (group 4) are by far the most exposed occupations, followed by professionals (2), managers (1) and technicians and associate professionals (3). Manual occupations (groups 6 to 9) have low scores. The three groups where tertiary graduates usually work (1, 2 and 3) are in the middle of the distribution, with a large variation between occupations of the same group.
 
 ```{python}
-#| label: tbl-summary-stats
-#| tbl-cap: "Summary statistics for performance scores"
-# Code visibility controlled by format settings in report.qmd
-
-# Display comprehensive summary statistics
-summary_stats = dummy_performance["performance"].describe()
-print("\n=== Performance Summary Statistics ===")
-print(summary_stats.to_string())
-
-# Additional statistics
-print(f"\nSkewness: {dummy_performance['performance'].skew():.3f}")
-print(f"Kurtosis: {dummy_performance['performance'].kurtosis():.3f}")
+#| label: tbl-ilo-change
+#| tbl-cap: "Mean exposure score by ISCO major group, 2023 and 2025 ILO indices (unweighted mean over occupations)"
+change = ilo4.groupby("major_group")[["exposure_mean_2023", "exposure_mean_2025"]].mean()
+change["Change"] = change["exposure_mean_2025"] - change["exposure_mean_2023"]
+change.columns = ["2023 index", "2025 index", "Change"]
+change.round(3)
 ```
 
-## Box Plot
+Between the 2023 and the 2025 versions of the index, the mean score of clerical occupations decreases (from about 0.62 to 0.54), while managers and professionals become slightly more exposed (@tbl-ilo-change). The refined index therefore moves part of the exposure towards the occupations where graduates work.
+
+### Sample overview
 
 ```{python}
-#| label: fig-performance-box
-#| fig-cap: "Box plot showing the five-number summary and outliers"
-# Code visibility controlled by format settings in report.qmd
+#| label: tbl-summary
+#| tbl-cap: "Summary statistics of the analysis sample, by education group (means weighted with wicss)"
+summary = df.groupby("group").agg(
+    Observations=("idpers", "size"),
+    Persons=("idpers", "nunique"),
+    Median_FTE_income=("income_fte", "median"),
+)
+summary["Mean FTE income"] = weighted_mean(df, "income_fte", "group")
+summary["Mean age"] = weighted_mean(df, "age", "group")
+summary["Share of women"] = weighted_mean(df, "female", "group")
+summary["Mean activity rate (%)"] = weighted_mean(df, "activity_rate", "group")
+summary["Mean AI exposure"] = weighted_mean(df, "exposure_mean_2025", "group")
 
-fig, ax = plt.subplots(figsize=(6, 4))
+summary.round(3).T
+```
 
-# Box plot
-bp = ax.boxplot(dummy_performance["performance"], vert=True, patch_artist=True,
-                label=["Performance"],
-                boxprops=dict(facecolor='lightblue', edgecolor='black', linewidth=1.5),
-                medianprops=dict(color='red', linewidth=2),
-                whiskerprops=dict(color='black', linewidth=1.5),
-                capprops=dict(color='black', linewidth=1.5))
-
-ax.set_title("Performance Score Distribution (Box Plot)", 
-             fontsize=13, fontweight='bold', pad=15)
-ax.set_ylabel("Performance Score", fontsize=11)
-ax.grid(True, axis='y', alpha=0.3, linestyle='--')
-
+```{python}
+#| label: fig-income-dist
+#| fig-cap: "Distribution of log full-time-equivalent net income (CHF 2020), tertiary-educated vs other employees (weighted)"
+plt.figure(figsize=(8, 4))
+sns.histplot(data=df, x="log_income", hue="group", weights="wicss", bins=50,
+             stat="density", common_norm=False, alpha=0.4)
+plt.xlabel("log(FTE net income, CHF 2020)")
+plt.ylabel("Density")
 plt.tight_layout()
 plt.show()
 ```
 
-:::
+### Are graduates more exposed to generative AI?
+
+```{python}
+#| label: fig-exposure-dist
+#| fig-cap: "Distribution of occupational AI exposure among employees, tertiary-educated vs others (weighted)"
+exp_by_group = weighted_mean(df, "exposure_mean_2025", "group")
+exp_mean_tert = exp_by_group["Tertiary"]
+exp_mean_other = exp_by_group["Non-tertiary"]
+more_less = "more" if exp_mean_tert > exp_mean_other else "less"
+
+plt.figure(figsize=(8, 4))
+sns.histplot(data=df, x="exposure_mean_2025", hue="group", weights="wicss", bins=30,
+             stat="density", common_norm=False, alpha=0.4)
+plt.xlabel("Mean exposure score of the occupation (ILO 2025)")
+plt.ylabel("Density")
+plt.tight_layout()
+plt.show()
+```
+
+On average, tertiary-educated employees work in occupations with an exposure score of `{python} f"{exp_mean_tert:.3f}"`, against `{python} f"{exp_mean_other:.3f}"` for other employees (weighted means, last row of @tbl-summary). Graduates are therefore `{python} more_less` exposed than other employees on average. @fig-exposure-dist also shows how the two distributions overlap: the difference between the two groups is a difference in averages, and many non-graduates also work in exposed occupations, for example in clerical jobs.
 
 ## Bivariate Analysis
 
-Explore relationships between two variables. 
+### Wages and exposure across occupations: official wage data
 
-Our univariate analysis in @fig-performance-dist revealed that performance scores follow an approximately normal distribution with a mean of 0.90. The box plot (@fig-performance-box) confirmed this finding and helped identify a few outliers at the lower end of the distribution.
-
-::: {.callout-tip}
-## How to Reference Figures
-
-Use `@fig-label` syntax to reference figures in your text. Quarto automatically numbers them and creates clickable links.
-
-**Examples with figures in this template:**
-
-- `@fig-performance-dist` → See @fig-performance-dist for details
-- `@fig-correlation-matrix` → As shown in @fig-correlation-matrix
-- `@tbl-anova-test` → The ANOVA results in @tbl-anova-test
-
-**Why reference figures?**
-
-1. Automatic numbering (updates if you reorder)
-2. Clickable links in HTML output
-3. Professional academic writing standard
-4. Helps readers find the relevant visualization
-
-**Example usage in text:**
-
-"The distribution shown in @fig-performance-dist indicates..."
-
-"As seen in @fig-correlation-matrix, there is a strong positive correlation..."
-:::
-
-Now let's examine how performance varies across different instructors.
-
-::: {.panel-tabset}
-
-## Grouped Comparison
+Before using the SHP, we look at the same question with official data. The Swiss Earnings Structure Survey (ESS) of the Federal Statistical Office publishes the median gross monthly wage for each 2-digit ISCO occupation group, by age group, for the private and public sectors combined (table T17). We merge it with the ILO index aggregated to 2 digits. These are public data covering all employees, not only graduates, so they give the general picture.
 
 ```{python}
-#| label: fig-performance-by-instructor
-#| fig-cap: "Performance scores grouped by instructor showing variation across instructors"
-# Code visibility controlled by format settings in report.qmd
+#| label: fig-ess-scatter
+#| fig-cap: "Median gross monthly wage (ESS 2024) vs AI exposure (ILO 2025) for 38 ISCO 2-digit occupation groups, all employees"
+from ess_data import load_ess_processed
 
-fig, ax = plt.subplots(figsize=(8, 5))
+ilo2 = load_ilo(project_root, level=2)
+ilo2["isco2"] = ilo2["isco2"].astype(int)
 
-# Violin plot with individual points
-sns.violinplot(data=dummy_performance, x="instructor", y="performance", 
-               ax=ax, inner="box", palette="Set2", linewidth=1.5,
-               edgecolor='black')
+ess = load_ess_processed(project_root)
+ess = pd.merge(ess, ilo2, on="isco2", how="left")
+ess24 = ess[ess["year"] == 2024]
 
-# Overlay individual points
-sns.swarmplot(data=dummy_performance, x="instructor", y="performance", 
-              ax=ax, color='black', alpha=0.3, size=3)
+rho, pval = stats.spearmanr(ess24["exposure_mean_2025"], ess24["all_ages"], nan_policy="omit")
 
-# Customize
-ax.set_title("Performance Scores by Instructor", 
-             fontsize=14, fontweight='bold', pad=15)
-ax.set_xlabel("Instructor", fontsize=12)
-ax.set_ylabel("Performance Score", fontsize=12)
-ax.grid(True, axis='y', alpha=0.3, linestyle='--')
+plt.figure(figsize=(8, 5))
+sns.scatterplot(data=ess24, x="exposure_mean_2025", y="all_ages", s=60)
 
+# write the name of a few occupations next to their point
+short_names = {11: "Chief executives", 25: "ICT professionals", 24: "Business & admin. prof.",
+               41: "General & keyboard clerks", 92: "Agricultural labourers"}
+for code, name in short_names.items():
+    row = ess24[ess24["isco2"] == code]
+    plt.annotate(name, (row["exposure_mean_2025"].iloc[0], row["all_ages"].iloc[0]),
+                 xytext=(6, 4), textcoords="offset points", fontsize=8)
+
+plt.title(f"Spearman correlation = {rho:.2f} (p = {pval:.3g})")
+plt.xlabel("Mean exposure score of the occupation group (ILO 2025)")
+plt.ylabel("Median gross monthly wage (CHF)")
 plt.tight_layout()
 plt.show()
 ```
 
-## Statistical Test
+Across occupation groups, better-paid occupations are clearly *more* exposed to generative AI (@fig-ess-scatter). The most exposed groups are clerical occupations, which have below-median wages, but the next most exposed are ICT and business professionals, which are among the best paid.
 
 ```{python}
-#| label: tbl-anova-test
-#| tbl-cap: "ANOVA test results for performance differences across instructors"
-# Code visibility controlled by format settings in report.qmd
+#| label: tbl-ess-age
+#| tbl-cap: "Spearman correlation between occupational AI exposure and the ESS median wage, by age group and year (38 ISCO 2-digit groups). Last column: correlation with the wage ratio of employees aged 29 or less to those aged 50+."
+ess["ratio_young_old"] = ess["age_29_less"] / ess["age_50_plus"]
 
-from scipy import stats
+cols = ["exposure_mean_2025", "age_29_less", "age_30_49", "age_50_plus", "ratio_young_old"]
+rows = []
+for year in sorted(ess["year"].unique()):
+    corr = ess.loc[ess["year"] == year, cols].corr(method="spearman")
+    rows.append(corr.loc["exposure_mean_2025"].drop("exposure_mean_2025").rename(year))
 
-# Group data by instructor
-groups = [group["performance"].values 
-          for name, group in dummy_performance.groupby("instructor")]
-
-# Perform ANOVA
-f_stat, p_value = stats.f_oneway(*groups)
-
-print("\n=== ANOVA Test Results ===")
-print(f"F-statistic: {f_stat:.4f}")
-print(f"P-value: {p_value:.4f}")
-print(f"\nInterpretation: {'Significant' if p_value < 0.05 else 'Not significant'} difference at α=0.05")
-
-# Group means
-print("\n=== Group Means ===")
-print(dummy_performance.groupby("instructor")["performance"].mean().to_string())
+ess_tab = pd.DataFrame(rows)
+ess_tab.columns = ["≤ 29 years", "30-49 years", "50+ years", "Ratio ≤ 29 / 50+"]
+ess_tab.index.name = "year"
+ess_tab.round(2)
 ```
 
-:::
+The correlation between exposure and wages is positive for all age groups, but slightly weaker for young employees. More striking, the ratio between the wages of young (≤ 29) and older (50+) employees is *lower* in more exposed occupations (last column of @tbl-ess-age): in these occupations, wages increase more with age and experience. This pattern is the same in every wave since 2012, so it is not a consequence of ChatGPT but a pre-existing feature of these occupations. We test whether it also holds for tertiary-educated workers with the SHP below (@fig-young) and in the OLS model.
 
-::: {.callout-important}
-## Plot Quality Requirements
+### Are the best-paid occupations also the most exposed?
 
-Every plot in your report should have:
-
-✓ **Clear title** that explains what's being shown  
-✓ **Labeled axes** with units when applicable  
-✓ **Legend** if multiple groups/series are shown  
-✓ **Appropriate color scheme** (colorblind-friendly)  
-✓ **Proper sizing** (readable text, not too small/large)  
-✓ **Figure caption** using `fig-cap` option  
-
-**Poor plots = Poor grades!** Take time to make your visualizations publication-quality.
-:::
-
-## Correlation Analysis
-
-::: {.panel-tabset}
-
-## Correlation Heatmap
+To answer our first sub-question, we compute the median income of tertiary-educated employees in each occupation and compare it with the occupation's exposure score (@fig-occ-scatter). Occupations with fewer than 30 observations are not shown, to avoid noisy medians and to respect the confidentiality of the data.
 
 ```{python}
-#| label: fig-correlation-matrix
-#| fig-cap: "Correlation matrix showing relationships between numeric variables"
-# Code visibility controlled by format settings in report.qmd
+#| label: fig-occ-scatter
+#| fig-cap: "Median FTE income of tertiary-educated employees vs AI exposure, by occupation (occupations with at least 30 observations). Point size shows the number of observations."
+occ = tert.groupby("isco_code").agg(
+    median_income=("income_fte", "median"),
+    exposure=("exposure_mean_2025", "first"),
+    n=("idpers", "size"),
+).reset_index()
+occ = occ[occ["n"] >= 30]  # keep occupations with enough observations
 
-# Create dummy dataset with multiple numeric variables
-np.random.seed(42)
-n = 200
-dummy_data = pd.DataFrame({
-    'Age': np.random.randint(20, 60, n),
-    'Experience': np.random.randint(0, 30, n),
-    'Performance': np.random.normal(0.85, 0.1, n).clip(0, 1),
-    'Salary': np.random.normal(60000, 20000, n)
-})
+rho_occ, p_occ = stats.spearmanr(occ["exposure"], occ["median_income"])
+if not p_occ < 0.05:  # also covers a missing p-value
+    occ_relation = "no clear"
+elif rho_occ > 0:
+    occ_relation = "a positive"
+else:
+    occ_relation = "a negative"
 
-# Add some correlations
-dummy_data['Salary'] = 40000 + dummy_data['Experience'] * 1000 + np.random.normal(0, 5000, n)
-dummy_data['Performance'] = 0.6 + dummy_data['Experience'] * 0.01 + np.random.normal(0, 0.1, n)
-dummy_data['Performance'] = dummy_data['Performance'].clip(0, 1)
-
-# Calculate correlation matrix
-corr_matrix = dummy_data.corr()
-
-# Create heatmap
-fig, ax = plt.subplots(figsize=(7, 6))
-sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0,
-            square=True, linewidths=1, cbar_kws={"shrink": 0.8},
-            fmt='.3f', ax=ax, vmin=-1, vmax=1)
-
-ax.set_title("Correlation Matrix of Numeric Variables", 
-             fontsize=14, fontweight='bold', pad=15)
-
+plt.figure(figsize=(8, 5))
+sns.scatterplot(data=occ, x="exposure", y="median_income", size="n", sizes=(20, 300), alpha=0.6)
+sns.regplot(data=occ, x="exposure", y="median_income", scatter=False, color="grey", ci=None)
+plt.title(f"Spearman correlation = {rho_occ:.2f} (p = {p_occ:.3f}), {len(occ)} occupations")
+plt.xlabel("Mean exposure score of the occupation (ILO 2025)")
+plt.ylabel("Median FTE net income (CHF 2020)")
 plt.tight_layout()
 plt.show()
 ```
 
-## Scatter Plot
+Across the `{python} len(occ)` occupations with at least 30 observations, the Spearman correlation between the median income of graduates and the exposure score is `{python} f"{rho_occ:.2f}"` (p = `{python} f"{p_occ:.3f}"`), so we find `{python} occ_relation` relation in the SHP. This is a correlation between occupations, not a causal effect: exposed occupations also differ in many other ways, such as the skills they require and the sectors they belong to.
+
+### Young vs older graduates
 
 ```{python}
-#| label: fig-scatter-experience-performance
-#| fig-cap: "Scatter plot showing positive relationship between experience and performance"
-# Code visibility controlled by format settings in report.qmd
+#| label: fig-young
+#| fig-cap: "Median FTE income by quintile of AI exposure, tertiary-educated employees aged 25-34 vs 35-65"
+# 5 groups of the same size, from least to most exposed
+tert["exposure_q"] = pd.qcut(tert["exposure_mean_2025"].rank(method="first"), 5,
+                             labels=["Q1 (least)", "Q2", "Q3", "Q4", "Q5 (most)"])
+tert["age_group"] = np.where(tert["young"] == 1, "25-34", "35-65")
 
-fig, ax = plt.subplots(figsize=(8, 5))
-
-# Scatter plot with regression line
-sns.regplot(data=dummy_data, x='Experience', y='Performance',
-            ax=ax, scatter_kws={'alpha': 0.5, 's': 50, 'edgecolor': 'black'},
-            line_kws={'color': 'red', 'linewidth': 2})
-
-ax.set_title("Experience vs Performance", 
-             fontsize=14, fontweight='bold', pad=15)
-ax.set_xlabel("Years of Experience", fontsize=12)
-ax.set_ylabel("Performance Score", fontsize=12)
-ax.grid(True, alpha=0.3, linestyle='--')
-
-# Add correlation coefficient
-corr = dummy_data['Experience'].corr(dummy_data['Performance'])
-ax.text(0.05, 0.95, f'Correlation: {corr:.3f}', 
-        transform=ax.transAxes, fontsize=11,
-        verticalalignment='top',
-        bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
-
+plt.figure(figsize=(8, 4))
+sns.pointplot(data=tert, x="exposure_q", y="income_fte", hue="age_group",
+              estimator="median", errorbar=None)
+plt.xlabel("Quintile of occupational AI exposure")
+plt.ylabel("Median FTE income (CHF 2020)")
+plt.legend(title="Age")
 plt.tight_layout()
 plt.show()
+
+# difference between the most and the least exposed quintile, by age group
+med_q = tert.groupby(["age_group", "exposure_q"], observed=True)["income_fte"].median()
+gap_young = med_q["25-34", "Q5 (most)"] - med_q["25-34", "Q1 (least)"]
+gap_old = med_q["35-65", "Q5 (most)"] - med_q["35-65", "Q1 (least)"]
 ```
 
-:::
+Among graduates aged 25 to 34, the median FTE income in the most exposed quintile differs by CHF `{python} f"{gap_young:+,.0f}"` from the least exposed quintile. For graduates aged 35 to 65, the difference is CHF `{python} f"{gap_old:+,.0f}"` (@fig-young). These are raw medians: young and older graduates do not work in the same occupations, so the OLS model in the next section compares them holding other characteristics constant.
 
-## Key Findings
+### Exposure over time
 
-**Remember: Interpretation is more important than the plots themselves!** Each finding below not only states *what* we observe but also *why* it matters and *what* it means for our analysis.
+```{python}
+#| label: tbl-years
+#| tbl-cap: "Tertiary-educated employees by SHP wave: sample size, median FTE income and mean AI exposure (weighted)"
+by_year = tert.groupby("year").agg(
+    Observations=("idpers", "size"),
+    Median_FTE_income=("income_fte", "median"),
+)
+by_year["Mean exposure"] = weighted_mean(tert, "exposure_mean_2025", "year")
+by_year.round(3)
+```
 
-Summarize the main insights from your exploratory analysis. **Always reference your figures when discussing findings and provide thorough interpretation!**
+The jump in observations in 2020 comes from the new SHP IV sample. Because the composition of the sample changes over time (the share of tertiary-educated employees grows from 46% to 58%), the yearly figures should not be read as a trend. The comparison before and after ChatGPT (2023-2024 vs earlier waves) is done in the models below, holding individual characteristics constant.
 
-1. **Distribution patterns**: The performance scores shown in @fig-performance-dist follow an approximately normal distribution with a mean of `{python} f'{dummy_performance["performance"].mean():.2f}'` and standard deviation of `{python} f'{dummy_performance["performance"].std():.2f}'`. 
-   
-   **Interpretation**: This normal distribution suggests that most students perform around the average, with fewer students at the extremes (very high or very low scores). The relatively small standard deviation indicates consistent performance across the group. This pattern is typical in educational settings and suggests that the assessment was well-calibrated meaning not too easy (which would cause ceiling effects) nor too difficult (which would cause floor effects). The normality assumption also validates the use of parametric statistical tests for subsequent analyses.
+## Statistical Tests
 
-2. **Outliers and data quality**: The box plot (@fig-performance-box) reveals minimal outliers, with only a few observations falling below the lower whisker.
-   
-   **Interpretation**: The scarcity of outliers suggests good data quality and consistent measurement. The few low-performing outliers warrant further investigation - they could represent students who faced unusual circumstances or measurement errors. However, their small number means they are unlikely to significantly impact our overall conclusions. This finding gives us confidence in proceeding with the full dataset without extensive outlier removal.
+We test two simple differences before modelling: (1) whether tertiary-educated employees work in more exposed occupations than other employees (Welch t-test), and (2) whether log income differs across the five exposure quintiles among graduates (one-way ANOVA). These tests are unweighted and treat repeated observations of the same person as independent, so the p-values are only indicative.
 
-3. **Group differences**: @fig-performance-by-instructor demonstrates noticeable variation in performance across different instructors, with some instructors showing higher median scores than others. The ANOVA test (@tbl-anova-test) confirms these differences are `{python} 'statistically significant (p < 0.05)' if p_value < 0.05 else 'not statistically significant (p ≥ 0.05)'`.
-   
-   **Interpretation**: `{python} 'The significant differences across instructors raise important questions about teaching effectiveness, grading consistency, or student assignment to sections. This finding suggests that "instructor" should be included as a control variable in any regression models predicting performance.' if p_value < 0.05 else 'The lack of significant differences suggests that instructor assignment does not substantially impact performance, or that grading standards are well-harmonized across sections.'` It also indicates that comparing students across different sections requires careful consideration. From a policy perspective, this might warrant investigating whether certain teaching methods are more effective or whether grading standards need to be harmonized across sections.
+```{python}
+#| label: tbl-tests
+#| tbl-cap: "Simple statistical tests (unweighted, indicative)"
+exp_tertiary = df.loc[df["tertiary"] == 1, "exposure_mean_2025"]
+exp_other = df.loc[df["tertiary"] == 0, "exposure_mean_2025"]
+t_stat, t_p = stats.ttest_ind(exp_tertiary, exp_other, equal_var=False)
 
-4. **Relationships**: The correlation matrix (@fig-correlation-matrix) reveals several interesting patterns:
-   - Strong positive correlation (r = `{python} f'{corr_matrix.loc["Experience", "Salary"]:.2f}'`) between Experience and Salary
-   - Moderate positive correlation (r = `{python} f'{corr_matrix.loc["Experience", "Performance"]:.2f}'`) between Experience and Performance
-   - Weak correlation (r = `{python} f'{corr_matrix.loc["Age", "Performance"]:.2f}'`) between Age and Performance
-   
-   **Interpretation**: The Experience-Salary correlation aligns with economic theory that experience is rewarded in labor markets. The Experience-Performance correlation suggests that experience contributes to better performance, though other factors clearly matter as well. Interestingly, Age shows minimal correlation with Performance, suggesting that chronological age alone doesn't predict success - what matters is relevant experience. These patterns will guide our variable selection for predictive modeling, favoring Experience over Age as a key predictor.
+groups = [tert.loc[tert["exposure_q"] == q, "log_income"] for q in tert["exposure_q"].cat.categories]
+f_stat, f_p = stats.f_oneway(*groups)
 
-5. **Experience-Performance relationship**: @fig-scatter-experience-performance clearly shows a positive linear relationship, with more experienced individuals tending to have higher performance scores. The correlation coefficient is `{python} f'{corr:.2f}'`.
-   
-   **Interpretation**: The linear relationship visible in the scatter plot confirms that experience has a consistent, positive effect on performance. However, the substantial scatter around the regression line indicates that experience alone doesn't determine performance - individual differences and other factors play important roles. This suggests that while experience is valuable, organizations shouldn't rely solely on it when making hiring or promotion decisions.
+pd.DataFrame({
+    "Test": ["Exposure: tertiary vs non-tertiary (Welch t-test)",
+             "Log income across exposure quintiles, graduates (ANOVA)"],
+    "Statistic": [round(t_stat, 2), round(f_stat, 2)],
+    "p-value": [f"{t_p:.3g}", f"{f_p:.3g}"],
+}).set_index("Test")
+```
 
-::: {.callout-warning}
-## Common Mistakes in Interpretation
+## Key findings so far
 
-**Observation (not interpretation):** "The histogram shows a normal distribution."  
-**Why it's insufficient:** This only describes what you see - it's an observation, not an interpretation. You need to explain what it *means* and *why it matters*.
-
-**Good interpretation (observation + story):** "The histogram shows a normal distribution (mean = 0.90, sd = 0.05), which indicates consistent performance across students. This pattern validates the use of parametric statistical tests in our subsequent analysis. The tight distribution suggests the assessment was well-calibrated, effectively distinguishing between ability levels without ceiling or floor effects that would compress scores."
-
-**Remember:** 
-
-- **Observation** = What you see in the data/plot
-- **Interpretation** = The story behind it - what it means, why it matters, what implications it has
-- **Always do both!** State the observation, then interpret its significance.
-:::
-
-::: {.callout-warning}
-## Common Mistake: Not Referencing Figures
-
-**Bad:** "The histogram shows a normal distribution."  
-**Good:** "As shown in @fig-performance-dist, the histogram reveals a normal distribution."
-
-**Why?**
-
-- Helps readers locate the relevant visualization
-- Creates professional, academic-style writing
-- Enables automatic figure numbering and links
-:::
-
-::: {.callout-tip}
-## From EDA to Analysis
-
-Use your EDA findings to:
-
-- **Refine research questions** based on observed patterns
-- **Select appropriate statistical methods** based on data distributions
-- **Identify variables** for inclusion in models
-- **Justify transformations** (e.g., log transform for skewed data)
-- **Set expectations** for what you might find in formal analysis
-:::
+- Generative-AI exposure is highest for clerical occupations and lowest for manual occupations; occupations held by graduates are in the middle but vary a lot within each major group (@fig-ilo-major).
+- Tertiary-educated employees are on average `{python} more_less` exposed than other employees (mean score `{python} f"{exp_mean_tert:.3f}"` vs `{python} f"{exp_mean_other:.3f}"`, @fig-exposure-dist, @tbl-summary).
+- In official wage data, better-paid occupations are more exposed (@fig-ess-scatter), and wages increase more with age in exposed occupations, already before ChatGPT (@tbl-ess-age).
+- Among graduates in the SHP, we find `{python} occ_relation` relation between median income and exposure across occupations (Spearman ρ = `{python} f"{rho_occ:.2f}"`, @fig-occ-scatter).
+- Between the least and the most exposed quintile, the median income of graduates differs by CHF `{python} f"{gap_young:+,.0f}"` for those aged 25-34 and by CHF `{python} f"{gap_old:+,.0f}"` for those aged 35-65 (@fig-young).
