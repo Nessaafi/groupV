@@ -1,1 +1,222 @@
+# Methods
 
+Our main question is whether occupational exposure to generative AI helps to **predict** the wages of tertiary-educated workers beyond standard wage determinants. We therefore compare two versions of each model:
+
+- **Baseline model:** age, age squared, sex, education level (`isced`), field of study (`pe31`), activity rate, sector (`noga2m`), region, ISCO major group and survey year;
+- **Baseline + exposure:** the same variables plus the ILO exposure score of the occupation and the standard deviation of its task scores.
+
+The target is `log_income`, the log of full-time-equivalent net income in 2020 francs. We use the log because income is right-skewed (@fig-income-dist) and because differences in logs can be read as percentage differences.
+
+We compare two families of models:
+
+1. **Linear regression (OLS).** It is simple, easy to interpret, and the standard model in the wage literature (Mincer-type wage equations).
+2. **Random forest.** It can capture non-linear effects and interactions (for example, exposure may matter differently by age or sector) without specifying them by hand.
+
+As in the course, we split the data with `train_test_split`: 80% of the observations go to the training set and 20% to the test set. Cross-validation uses 5 folds (`cv=5`). Each person appears in several waves, so the same person can be in both the training and the test set. This may make the test error slightly optimistic; the final report will check this with a split by person.
+
+We tune the random forest with `GridSearchCV` on the training set only, and compare the training and validation scores to check for overfitting. The models are evaluated with the RMSE (in log points, so 0.30 is roughly a 30% error) and the R² on the test set.
+
+```{python}
+#| label: model-setup
+#| output: false
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import GridSearchCV, cross_val_score, train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+
+np.random.seed(42)
+
+model_df = tert.copy()
+model_df["age2"] = model_df["age"] ** 2
+
+numeric = ["age", "age2", "female", "activity_rate"]
+categorical = ["isced", "pe31", "noga2m", "region", "isco1", "year"]
+exposure = ["exposure_mean_2025", "exposure_sd_2025"]
+
+# categories as text, a missing value becomes its own category
+for col in categorical:
+    model_df[col] = model_df[col].astype(str).replace("nan", "missing")
+
+X = pd.get_dummies(model_df[numeric + exposure + categorical], columns=categorical,
+                   drop_first=True, dtype=int)
+y = model_df["log_income"]
+
+# 80% training, 20% test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# baseline = same features without the two exposure variables
+X_train_base, X_test_base = X_train.drop(columns=exposure), X_test.drop(columns=exposure)
+```
+
+## Assumptions
+
+- **OLS** assumes a linear relation between the features and log income, errors with constant variance, and independent observations. The log transformation reduces the skewness of income and makes the relation closer to linear. Observations are not independent, because the same person appears in several waves; in the OLS wage equation we therefore cluster the standard errors by person. Age enters with a squared term because wages usually rise and then flatten with age.
+- **Random forest** makes no assumption on the shape of the relation, but it can overfit; this is why we tune its depth and leaf size with cross-validation.
+- **Exposure** is measured at the occupation level, so it cannot capture differences between workers in the same occupation.
+
+## Why these methods
+
+- **Two specifications (with/without exposure)** answer our main question directly: if exposure helps prediction, the RMSE should go down on data the model has never seen.
+- **OLS and random forest** give a transparent benchmark and a flexible model; if exposure only helps the random forest, its role is probably non-linear.
+- **Grid search with cross-validation** selects the random forest settings on the training set only, as in the course; the test set is used once, at the end.
+- **Train/test split and 5-fold cross-validation** follow the course, so that the models are always evaluated on data they were not trained on.
+- **The OLS wage equation** gives the direction and size of the association and tests whether it differs for young graduates and after the release of ChatGPT.
+
+## Tuning the random forest
+
+```{python}
+#| label: tbl-grid
+#| tbl-cap: "Grid search for the random forest (5-fold cross-validation, training set only). Scores are RMSE in log points (lower is better)."
+param_grid = {
+    "max_depth": [6, 10, None],
+    "min_samples_leaf": [10, 50],
+}
+forest_search = GridSearchCV(
+    RandomForestRegressor(n_estimators=100, random_state=42, n_jobs=-1),
+    param_grid, cv=5, scoring="neg_root_mean_squared_error",
+    return_train_score=True,
+)
+forest_search.fit(X_train, y_train)
+
+grid_results = pd.DataFrame(forest_search.cv_results_)
+grid_results["train RMSE"] = -grid_results["mean_train_score"]
+grid_results["validation RMSE"] = -grid_results["mean_test_score"]
+grid_results = grid_results.rename(columns={"param_max_depth": "max_depth",
+                                            "param_min_samples_leaf": "min_samples_leaf"})
+best_row = grid_results.loc[forest_search.best_index_]
+best_depth = "no limit" if pd.isna(best_row["max_depth"]) else int(best_row["max_depth"])
+best_leaf = int(best_row["min_samples_leaf"])
+best_train_rmse = best_row["train RMSE"]
+best_val_rmse = best_row["validation RMSE"]
+
+grid_results[["max_depth", "min_samples_leaf", "train RMSE", "validation RMSE"]].sort_values("validation RMSE").round(4)
+```
+
+The grid search selects a maximum depth of `{python} best_depth` and at least `{python} best_leaf` observations per leaf. With these settings, the training RMSE is `{python} f"{best_train_rmse:.3f}"` and the validation RMSE is `{python} f"{best_val_rmse:.3f}"` (@tbl-grid). A large gap between the two would indicate overfitting, as for deep trees in the course exercises.
+
+# Findings and Discussion
+
+## Prediction results on the test set
+
+```{python}
+#| label: tbl-test-results
+#| tbl-cap: "Prediction of log FTE income on the test set (20% of the observations, not used during training)"
+models = {
+    "OLS": Pipeline([("stand", StandardScaler()), ("model", LinearRegression())]),
+    "Random forest": RandomForestRegressor(n_estimators=100, random_state=42, n_jobs=-1,
+                                           **forest_search.best_params_),
+}
+data = {"Baseline": (X_train_base, X_test_base), "Baseline + exposure": (X_train, X_test)}
+
+rows = []
+for model_name, model in models.items():
+    for spec, (X_tr, X_te) in data.items():
+        model.fit(X_tr, y_train)
+        y_pred = model.predict(X_te)
+        rows.append({
+            "Model": model_name,
+            "Specification": spec,
+            "RMSE": np.sqrt(mean_squared_error(y_test, y_pred)),
+            "R²": r2_score(y_test, y_pred),
+        })
+
+test_results = pd.DataFrame(rows)
+
+# best model on the test set, and change in RMSE when exposure is added
+best_test = test_results.loc[test_results["RMSE"].idxmin()]
+rmse = test_results.set_index(["Model", "Specification"])["RMSE"]
+delta_ols = rmse["OLS", "Baseline + exposure"] - rmse["OLS", "Baseline"]
+delta_rf = rmse["Random forest", "Baseline + exposure"] - rmse["Random forest", "Baseline"]
+
+print(f"Training set: {len(X_train):,} observations, test set: {len(X_test):,} observations")
+test_results.round(4)
+```
+
+```{python}
+#| label: tbl-cv-results
+#| tbl-cap: "5-fold cross-validation (training set): mean and standard deviation of the RMSE across folds"
+cv_rows = []
+for model_name, model in models.items():
+    for spec, (X_tr, X_te) in data.items():
+        scores = -cross_val_score(model, X_tr, y_train, cv=5,
+                                  scoring="neg_root_mean_squared_error")
+        cv_rows.append({"Model": model_name, "Specification": spec,
+                        "Mean RMSE": scores.mean(), "Std RMSE": scores.std()})
+cv_results = pd.DataFrame(cv_rows)
+
+# is the best gain from exposure larger than the variation across folds?
+best_gain = -min(delta_ols, delta_rf)  # positive = exposure lowers the RMSE
+cv_std = cv_results["Std RMSE"].mean()
+if best_gain > cv_std:
+    exposure_verdict = ("this gain is larger than the variation across folds, so exposure "
+                        "adds some information to predict wages")
+elif best_gain > 0:
+    exposure_verdict = ("this gain is smaller than the variation across folds, so we cannot "
+                        "conclude that exposure improves wage prediction")
+else:
+    exposure_verdict = "adding exposure does not improve the prediction"
+
+cv_results.round(4)
+```
+
+On the test set, the best model is the `{python} best_test["Model"]` (`{python} best_test["Specification"]`), with an RMSE of `{python} f"{best_test['RMSE']:.3f}"` and an R² of `{python} f"{best_test['R²']:.3f}"` (@tbl-test-results). Adding the two exposure variables changes the test RMSE by `{python} f"{delta_ols:+.4f}"` for OLS and by `{python} f"{delta_rf:+.4f}"` for the random forest (a negative value means a better prediction). The RMSE varies by about `{python} f"{cv_std:.4f}"` across cross-validation folds (@tbl-cv-results), and `{python} exposure_verdict`.
+
+This result should be read with one point in mind: the baseline already contains the ISCO major group, so exposure can only add information *within* major groups. With 3-digit occupation codes, many workers share the same exposure score, which limits what it can add. The final report will repeat this comparison with 4-digit codes.
+
+## Association between exposure and wages (OLS)
+
+Prediction tells us *whether* exposure adds information, but not in which direction. We therefore also estimate a linear wage equation on the full sample of tertiary-educated workers with `statsmodels`, which gives coefficients with standard errors and p-values. Because the same person appears in several years, the standard errors are "clustered" by person: otherwise they would be too small and the p-values too optimistic. We add two interactions that correspond to our sub-questions: exposure × young (25-34), and exposure × post-ChatGPT waves (2023-2024). This is an association, not a causal effect.
+
+```{python}
+#| label: tbl-ols
+#| tbl-cap: "OLS wage equation, tertiary-educated employees (dependent variable: log FTE income). Exposure is measured in units of 0.1. Standard errors clustered by person."
+import statsmodels.formula.api as smf
+
+ols_df = model_df.copy()
+# exposure x10, so the coefficient = effect of +0.1 exposure
+ols_df["exposure_10"] = ols_df["exposure_mean_2025"] * 10
+
+formula = ("log_income ~ exposure_10 + exposure_10:young + exposure_10:post_chatgpt + young"
+           " + age + age2 + female + activity_rate + C(isced) + C(region) + C(noga2m) + C(year)")
+# cluster by person: the same person appears in several years
+ols = smf.ols(formula, data=ols_df).fit(cov_type="cluster", cov_kwds={"groups": ols_df["idpers"]})
+
+keep = ["exposure_10", "exposure_10:young", "exposure_10:post_chatgpt", "young", "female"]
+ols_table = pd.DataFrame({
+    "Coefficient": ols.params[keep],
+    "Std. error": ols.bse[keep],
+    "p-value": ols.pvalues[keep],
+})
+# with a log target, a coefficient b means about (exp(b) - 1) x 100 % change in income
+ols_table["Approx. % effect"] = (np.exp(ols_table["Coefficient"]) - 1) * 100
+
+
+def significance(p):
+    return "statistically significant at the 5% level" if p < 0.05 else "not statistically significant"
+
+
+pct_exp = ols_table.loc["exposure_10", "Approx. % effect"]
+p_exp = ols_table.loc["exposure_10", "p-value"]
+coef_young = ols_table.loc["exposure_10:young", "Coefficient"]
+p_young = ols_table.loc["exposure_10:young", "p-value"]
+coef_post = ols_table.loc["exposure_10:post_chatgpt", "Coefficient"]
+p_post = ols_table.loc["exposure_10:post_chatgpt", "p-value"]
+young_word = "stronger" if coef_young > 0 else "weaker"
+post_word = "stronger" if coef_post > 0 else "weaker"
+
+ols_table.round(4)
+```
+
+In this specification we do **not** control for the ISCO major group, because the exposure score is largely determined by the occupation: controlling for occupation groups would remove most of the variation we want to describe. The coefficient on `exposure_10` therefore tells us how much more (or less) graduates earn, on average, in occupations whose exposure is 0.1 higher, for the same age, sex, education, sector, region and year.
+
+For graduates aged 35 or more before ChatGPT (the reference group), an exposure score 0.1 higher is associated with an income about `{python} f"{pct_exp:+.1f}"`% different, holding the other variables constant. This coefficient is `{python} significance(p_exp)` (p = `{python} f"{p_exp:.3f}"`). For young graduates (25-34), the interaction coefficient is `{python} f"{coef_young:+.4f}"`, meaning that the association is `{python} young_word` for them, and this difference is `{python} significance(p_young)` (p = `{python} f"{p_young:.3f}"`). After the release of ChatGPT (2023-2024), the interaction coefficient is `{python} f"{coef_post:+.4f}"`: the association is `{python} post_word` than before, and this difference is `{python} significance(p_post)` (p = `{python} f"{p_post:.3f}"`). With only two waves after ChatGPT, this last result is a first indication rather than a conclusion.
+
+## Discussion
+
+These results give a first answer to our sub-questions 2 (does exposure improve wage prediction?) and 4 (is the relation different for young graduates?). The question of whether the best-paid occupations are the most exposed (sub-question 1) was answered descriptively in the EDA (@fig-ess-scatter, @fig-occ-scatter). Classification (sub-question 3) and the augmentation vs automation extension (sub-question 5) will be done in the final report.
+
+The literature expects generative AI to affect well-paid, highly educated occupations more than earlier automation did [@eloundou2024; @gmyrek2025]. A positive association between exposure and wages, as in the official ESS data, is consistent with this view. It does not mean that AI raises wages: exposed occupations were already better paid before ChatGPT, and the ILO index mostly describes augmentation rather than replacement [@gmyrek2023].
+
+For students like us, the practical implication is that a degree does not protect from exposure to generative AI: many graduate occupations are among the most exposed. Whether this exposure turns into lower or higher wages cannot be seen yet with two waves after ChatGPT; following the next SHP waves, with 4-digit occupation codes, is needed before drawing conclusions for career choices or training policies.
