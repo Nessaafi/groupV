@@ -1,1 +1,75 @@
+<!-- Setup chunk (copied from _quarto_guide.qmd so you can delete the guide). Keep this file first in report.qmd. -->
 
+```{python}
+#| label: setup
+#| echo: false
+#| output: false
+#| message: false
+# Setup code chunk to load the packages, the project root and the source directory
+
+import importlib.util
+import os
+import sys
+import types
+from pathlib import Path
+
+
+def resolve_report_dir() -> Path:
+    if "__file__" in globals():
+        return Path(__file__).resolve().parent
+    doc_path = os.environ.get("QUARTO_DOCUMENT_PATH")
+    if doc_path:
+        return Path(doc_path).resolve()
+    return Path.cwd().resolve()
+
+
+def resolve_project_root(start: Path) -> Path:
+    env_root = os.environ.get("QUARTO_PROJECT_ROOT")
+    if env_root:
+        root = Path(env_root).resolve()
+        if (root / "src").is_dir():
+            return root
+
+    search_start = start
+
+    doc_path = os.environ.get("QUARTO_DOCUMENT_PATH")
+    if doc_path:
+        candidate = Path(doc_path).resolve()
+        if candidate.is_file():
+            candidate = candidate.parent
+        search_start = candidate
+
+    for candidate in [search_start, *search_start.parents]:
+        if (candidate / "src").is_dir():
+            return candidate
+
+    raise FileNotFoundError(
+        "Could not locate a project root containing a 'src' directory. "
+        "Update the Quarto setup chunk to point to your project root."
+    )
+
+
+report_dir = resolve_report_dir()
+project_root = resolve_project_root(report_dir)
+src_dir = project_root / "src"
+
+
+if str(src_dir) not in sys.path:
+    sys.path.insert(0, str(src_dir))
+
+runtime_module = types.ModuleType("quarto_runtime")
+runtime_module.project_root = project_root
+runtime_module.report_dir = report_dir
+sys.modules["quarto_runtime"] = runtime_module
+
+module_path = src_dir / "project_setup.py"
+spec = importlib.util.spec_from_file_location("project_setup", module_path)
+if spec is None or spec.loader is None:
+    raise ImportError(f"Unable to load project_setup from {module_path}")
+
+project_setup = importlib.util.module_from_spec(spec)
+sys.modules["project_setup"] = project_setup
+spec.loader.exec_module(project_setup)
+
+project_setup.configure_environment(project_root=project_root)
+```
