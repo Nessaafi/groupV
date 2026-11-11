@@ -1,12 +1,12 @@
 ---
-title: Project Title
+title: Paid to Be Replaced? Generative AI Exposure and Wages of Tertiary Graduates in Switzerland
 author:
- - Cetaj, Jetemiraa
+ - Cetaj, Jetemira
  - Essaafi, Nagham
  - Frangioni, Luca
- - Name III, First Name III
-institute: Name of the University
-date: today
+ - Roubakine, Timour
+institute: University of Lausanne, Faculty of Business and Economics 
+date: 8th November 2026
 title-block-banner: "#0095C8" # chosen for the university of lausanne
 toc-location: right
 bibliography: references.bib
@@ -60,7 +60,7 @@ execute:
 
 <!-- These are your sections, sections/_quarto_guide.qmd should be deleted -->
 
-{{< include sections/_quarto_guide.qmd >}}
+{{< include sections/_setup.qmd >}}
 {{< include sections/_introduction.qmd >}}
 {{< include sections/_data.qmd >}}
 {{< include sections/_eda.qmd >}}
