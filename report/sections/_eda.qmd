@@ -248,7 +248,92 @@ by_year.round(3)
 ```
 
 The jump in observations in 2020 comes from the new SHP IV sample. Because the composition of the sample changes over time (the share of tertiary-educated employees grows from 46% to 58%), the yearly figures should not be read as a trend. The comparison before and after ChatGPT (2023-2024 vs earlier waves) is done in the models below, holding individual characteristics constant.
+### Every explanatory variable, one by one
 
+The models in the next section use many explanatory variables. Before modelling, we look at each of them individually, including those for which we do not expect a relation, so that no variable enters the model without having been checked. For each variable, @tbl-all-vars gives its share of missing values, its number of categories (or its mean) and two simple tests: its association with log income and its association with AI exposure. We use a Spearman correlation for numeric variables and a Kruskal-Wallis test (a non-parametric version of the ANOVA) for categorical variables. @fig-all-cat and @fig-all-num show the median income for each category or value.
+
+```{python}
+#| label: tbl-all-vars
+#| tbl-cap: "Every explanatory variable, one by one (tertiary-educated employees, unweighted). Spearman correlation for numeric variables, Kruskal-Wallis test for categorical variables (categories with at least 30 observations)."
+numeric_vars = {"age": "Age", "activity_rate": "Activity rate (%)",
+                "exposure_mean_2025": "AI exposure (ILO 2025)", "exposure_sd_2025": "Dispersion of task exposure"}
+categorical_vars = {"sex": "Sex", "isced": "Education level (ISCED)", "pe31": "Field of study",
+                    "noga2m": "Sector (NOGA)", "region": "Region", "com3_": "Urban / rural",
+                    "isco1": "ISCO major group", "year": "Survey year", "young": "Young (25-34)"}
+
+
+def association(data, col, target, numeric):
+    # Spearman for a numeric variable, Kruskal-Wallis for a categorical one
+    d = data[[col, target]].dropna()
+    if numeric:
+        return stats.spearmanr(d[col], d[target])
+    groups_c = [g[target] for _, g in d.groupby(col) if len(g) >= 30]
+    if len(groups_c) < 2:
+        return np.nan, np.nan
+    return stats.kruskal(*groups_c)
+
+
+rows_vars = []
+for col, name in {**numeric_vars, **categorical_vars}.items():
+    numeric = col in numeric_vars
+    stat_inc, p_inc = association(tert, col, "log_income", numeric)
+    if col.startswith("exposure"):
+        stat_exp, p_exp_var = np.nan, np.nan  # exposure against itself is not informative
+    else:
+        stat_exp, p_exp_var = association(tert, col, "exposure_mean_2025", numeric)
+    rows_vars.append({
+        "Variable": name,
+        "Type": "numeric" if numeric else "categorical",
+        "Missing (%)": round(tert[col].isna().mean() * 100, 1),
+        "Mean / categories": f"{tert[col].mean():.2f}" if numeric else f"{tert[col].nunique()} categories",
+        "Test": "Spearman ρ" if numeric else "Kruskal-Wallis H",
+        "With income": round(stat_inc, 3),
+        "p (income)": p_inc,
+        "With exposure": round(stat_exp, 3),
+        "p (exposure)": p_exp_var,
+    })
+
+all_vars = pd.DataFrame(rows_vars).set_index("Variable")
+n_vars = len(all_vars)
+n_sig_income = int((all_vars["p (income)"] < 0.05).sum())
+weakest_var = all_vars["p (income)"].idxmax()
+
+all_vars_display = all_vars.copy()
+for c in ["p (income)", "p (exposure)"]:
+    all_vars_display[c] = all_vars_display[c].map(lambda v: "" if pd.isna(v) else f"{v:.3g}")
+all_vars_display
+```
+
+```{python}
+#| label: fig-all-cat
+#| fig-cap: "Median FTE income of tertiary-educated employees by category, for each categorical variable (categories with at least 30 observations; codes as in the SHP codebook)"
+fig, axes = plt.subplots(3, 3, figsize=(10, 9))
+for ax, (col, name) in zip(axes.flat, categorical_vars.items()):
+    med = tert.groupby(col)["income_fte"].agg(["median", "size"])
+    med = med[med["size"] >= 30]  # small categories hidden (noise and confidentiality)
+    ax.bar(med.index.astype(str), med["median"], color="#9ecae1")
+    ax.set_title(name, fontsize=10)
+    ax.tick_params(axis="x", labelrotation=90, labelsize=7)
+fig.supylabel("Median FTE income (CHF 2020)")
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+#| label: fig-all-num
+#| fig-cap: "Median FTE income of tertiary-educated employees by age and by activity rate (8 groups of equal width)"
+fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
+for ax, (col, name) in zip(axes, [("age", "Age"), ("activity_rate", "Activity rate (%)")]):
+    binned = pd.cut(tert[col], bins=8)
+    med = tert.groupby(binned, observed=True)["income_fte"].median()
+    ax.plot([interval.mid for interval in med.index], med.values, marker="o")
+    ax.set_xlabel(name)
+    ax.set_ylabel("Median FTE income (CHF 2020)")
+plt.tight_layout()
+plt.show()
+```
+
+Out of the `{python} n_vars` variables, `{python} n_sig_income` have a statistically significant association with log income at the 5% level (@tbl-all-vars); the weakest one is `{python} weakest_var`. With several thousand observations, even very small differences become significant, so the size of the statistic and the shape of @fig-all-cat and @fig-all-num matter more than the p-value. We keep all variables in the baseline model, because a variable with a weak relation on its own can still matter once the others are held constant. The last two columns of @tbl-all-vars also show which variables are related to AI exposure: these are the variables that could confound the relation between exposure and wages, and they must therefore be controlled for in the models.
 ## Statistical Tests
 
 We test two simple differences before modelling: (1) whether tertiary-educated employees work in more exposed occupations than other employees (Welch t-test), and (2) whether log income differs across the five exposure quintiles among graduates (one-way ANOVA). These tests are unweighted and treat repeated observations of the same person as independent, so the p-values are only indicative.
