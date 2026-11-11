@@ -1,3 +1,109 @@
 # Data
 
 ## Sources
+
+We combine four data sources:
+
+1. **Swiss Household Panel (SHP)**, waves 2016 to 2024, distributed by FORS through [SWISSUbase](https://www.swissubase.ch) (accessed October 2026). The SHP is an annual panel survey of households and individuals living in Switzerland. Access requires a signed user contract, which forbids sharing the microdata: the raw and cleaned SHP files are therefore kept locally and are not included in our GitHub repository. We use three files from the Stata release:
+   - `shplong_p_user.dta`: individual questionnaire (one row per person and year);
+   - `imputed_income_pers_long_shp.dta`: individual incomes, with missing values imputed by FORS;
+   - `shplong_h_user.dta`: household questionnaire (canton, region).
+2. **ILO generative-AI exposure index (2025)**, from ILO Working Paper 140, *Generative AI and Jobs: A Refined Global Index of Occupational Exposure* [@gmyrek2025]. The file gives a 2025 exposure score between 0 and 1 for 3,265 tasks belonging to 427 four-digit ISCO-08 occupations, together with the occupation mean, the standard deviation of task scores and an exposure gradient.
+3. **Swiss Earnings Structure Survey (ESS/LSE)**, Federal Statistical Office, table T17 "Gross monthly wage by groups of occupations, age and gender, private and public sectors combined", 2012-2024 (every two years). It gives the median standardized gross monthly wage for 38 ISCO 2-digit occupation groups by age group. We use it to describe the link between wages and exposure with official data and to check that SHP wages are realistic. It is public and stored in `data/raw/`.
+4. **Survey of higher education graduates (EHA)**, Federal Statistical Office, standardized gross annual income one year after graduation by type of school, degree and field of study (graduation years 2002-2024). It will be used in the final report to check the incomes of young graduates in the SHP.
+
+The ILO index can be downloaded from the ILO website (https://www.ilo.org), and the ESS and EHA tables from the website of the Federal Statistical Office (https://www.bfs.admin.ch). All files were accessed in October 2026. All sources cover Switzerland, except the ILO index, which is global.
+
+## Description
+
+The analysis dataset is a **person-year panel**: one row is one employee observed in one SHP wave. After cleaning, it contains **40,796 observations of 10,076 persons** aged 25 to 65, between 2016 and 2024. The main variables are:
+
+| Type | Variables |
+|---|---|
+| Identifiers | `idpers` (person), `idhous` (household), `year` (wave), `pdate` (interview date) |
+| Target | `log_income`: log of annual net employment income, in 2020 francs, converted to full-time equivalent |
+| Individual | `age`, `sex`, `isced` (education level), `pe31` (field of study), `tertiary`, `young` (25-34) |
+| Job | `isco3` (ISCO-08 occupation, 3 digits; 4 digits pending), `noga2m` (sector), `activity_rate` (% of full time) |
+| Location | `region` (7 FSO major regions), `canton`, `com3_` (urban / rural) |
+| AI exposure (ILO) | `exposure_mean_2025`, `exposure_sd_2025`, `exposure_mean_2023` (per occupation) |
+| Weights | `wicss` (cross-sectional individual weight, used for descriptive statistics) |
+
+## Loading Data
+
+```{python}
+#| label: load-data
+#| output: false
+from quarto_runtime import project_root
+from analysis_data import load_analysis_data
+
+df, merge_info = load_analysis_data(project_root)
+tert = df[df["tertiary"] == 1].copy()
+```
+
+Our workflow follows the structure of the project template: the original files are stored unchanged in `data/raw/`; Python scripts in `src/` clean them and save the results in `data/processed/`; the report only reads the processed files. The public tables are created with `python src/ilo_aggregate.py` and `python src/ess_data.py`. The cleaned SHP file is created by the notebook `01_shp_cleaning.ipynb` and kept locally only.
+
+After loading, the analysis dataset has `{python} f"{df.shape[0]:,}"` rows and `{python} df.shape[1]` columns, and `{python} int(df.duplicated(["idpers", "year"]).sum())` duplicated person-year rows. We do not print the first rows of the data, because the SHP contract forbids showing individual observations; only aggregated results appear in this report.
+
+## Wrangling
+
+### General Transformations
+
+The SHP cleaning is done in the notebook `01_shp_cleaning.ipynb`. We stack the waves 2016 to 2024 of the person file, merge the imputed income file and the household file on `idpers`, `idhous` and `year`, and recode the SHP negative missing codes (-1, -2, -3, ...) to missing values. We then create the following variables:
+
+- `tertiary` = 1 if ISCED 5A, 5B or 6 (SHP codes 51, 52, 60);
+- `young` = 1 if the person is aged 25 to 34;
+- `activity_rate` = 100 for full-time workers, otherwise the declared part-time percentage (`pw42`);
+- `income_real` = `iempyni` × 100 / `cpi2020`, i.e. net income in 2020 francs, using the consumer price index provided by FORS;
+- `income_fte` = `income_real` × 100 / `activity_rate` (full-time equivalent);
+- `log_income` = log(`income_fte`), the variable we predict.
+
+@tbl-filters shows how each filter reduces the sample.
+
+| Step | Observations |
+|---|---:|
+| SHP person file, 2016-2024 | 148,119 |
+| Employed persons | 63,931 |
+| Employees (excluding self-employed) | 51,657 |
+| Aged 25 to 65 | 43,907 |
+| Known ISCO-08 occupation | 43,090 |
+| Positive income and activity rate ≥ 20% | 41,630 |
+| Without the 1% lowest and 1% highest incomes | **40,796** |
+
+: Sample construction {#tbl-filters}
+
+### Merging with the ILO index
+
+The ILO index is defined for 4-digit ISCO-08 occupations, while the standard SHP release only contains 3-digit codes (`is3maj`). The detailed 4-digit codes require an additional SHP contract, which we have requested and are still waiting for.
+
+To merge the two sources, we aggregate the ILO index to the level of the SHP codes. For each occupation group, the exposure score is the average of the task scores of all its occupations, and the dispersion is the standard deviation of these task scores. The ILO file does not contain employment weights, so all tasks have the same weight. The code is in `src/ilo_aggregate.py`, and the level is set by one parameter (`ISCO_LEVEL` in `src/analysis_data.py`). The results in this update use **`{python} merge_info["level"]`-digit codes**; the final report will use 4-digit codes once they are available.
+
+```{python}
+#| label: tbl-merge
+#| tbl-cap: "Result of the merge between the SHP and the ILO index"
+import pandas as pd
+
+pd.DataFrame({
+    "": ["Observations before merge", "Dropped (sex = 3)", "Not matched to the ILO index",
+         "Share matched", "Occupation codes matched", "Final sample (all employees)", "Of which tertiary-educated",
+         "Persons (tertiary-educated)"],
+    "Value": [f"{merge_info['n_start']:,}", f"{merge_info['n_sex_dropped']:,}",
+              f"{merge_info['n_unmatched']:,}", f"{merge_info['share_matched']:.1%}", f"{merge_info['n_codes']}",
+              f"{len(df):,}", f"{len(tert):,}", f"{tert['idpers'].nunique():,}"],
+}).set_index("")
+```
+
+### Spotting Mistakes and Missing Data
+
+In the SHP, missing values are coded with negative numbers (-1 = does not know, -2 = no answer, -3 = inapplicable, ...). We recode them to missing values before filtering. Missing incomes are imputed by FORS in the file `imputed_income_pers_long_shp.dta`; only 3.6% of the incomes in our sample are imputed, and the indicator `impempyn` allows a robustness check without them. The ILO file required no cleaning: it has no missing 2025 scores and no duplicated tasks.
+
+### Listing Anomalies and Outliers, and Other Challenges
+
+- **4-digit ISCO codes not yet available.** Until the detailed codes arrive, the exposure score is measured for 3-digit groups. This loses some detail: for example, all "business and administration professionals" share the same score. The pipeline is ready to switch to 4-digit codes by changing one parameter.
+- **Net vs gross income.** In the SHP, "net" means after social contributions (AHV/AVS, unemployment insurance), not after taxes. We use the net income `iempyni` because it has fewer missing values; only 3.6% of incomes are imputed by FORS. The gross income `iempyg` is kept to compare with the ESS.
+- **Inflation.** SHP incomes are in current francs. We deflate them with the CPI provided by FORS (base 2020), so no external CPI file is needed.
+- **Very low incomes and small activity rates.** Among employees aged 18 to 24, 38% have a full-time equivalent income below CHF 20,000 (apprentices, students), against 2 to 5% from age 25. We therefore keep only persons aged 25 to 65. We also drop activity rates below 20%, because the full-time conversion becomes unstable (CHF 5,000 at 5% would become CHF 100,000).
+- **Outliers.** We remove the 1% lowest and 1% highest full-time equivalent incomes (bounds: CHF 10,454 and CHF 242,603 in 2020 francs).
+- **Self-employed and owners.** We exclude self-employed persons, employees of their own company, family business partners and employees of private households, because their income depends on the firm and not only on the occupation.
+- **Timing of ChatGPT.** Incomes refer to the situation at the interview (September to February). The 2022 wave is therefore classified as *before* ChatGPT, which leaves two waves after its release (2023 and 2024).
+- **Changes in the sample.** A new SHP sample (SHP IV) enters in 2020, and the share of tertiary-educated employees grows from 46% in 2016 to 58% in 2024. Raw averages before and after 2022 are therefore not comparable; we compare workers with similar profiles instead.
+- **Confidentiality.** The SHP contract forbids sharing the data. All files derived from the SHP start with `shp_` and are excluded from Git through `.gitignore`. The report shows only aggregated statistics.
