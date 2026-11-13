@@ -177,6 +177,9 @@ import statsmodels.formula.api as smf
 ols_df = model_df.copy()
 # exposure x10, so the coefficient = effect of +0.1 exposure
 ols_df["exposure_10"] = ols_df["exposure_mean_2025"] * 10
+ols_vars = ["log_income", "exposure_10", "young", "post_chatgpt", "age", "age2", "female",
+            "activity_rate", "isced", "region", "noga2m", "year", "idpers"]
+ols_df = ols_df.dropna(subset=ols_vars)  # same rows for the model and the clusters
 
 formula = ("log_income ~ exposure_10 + exposure_10:young + exposure_10:post_chatgpt + young"
            " + age + age2 + female + activity_rate + C(isced) + C(region) + C(noga2m) + C(year)")
