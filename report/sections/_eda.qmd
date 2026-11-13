@@ -250,7 +250,7 @@ by_year.round(3)
 The jump in observations in 2020 comes from the new SHP IV sample. Because the composition of the sample changes over time (the share of tertiary-educated employees grows from 46% to 58%), the yearly figures should not be read as a trend. The comparison before and after ChatGPT (2023-2024 vs earlier waves) is done in the models below, holding individual characteristics constant.
 ### Every explanatory variable, one by one
 
-The models in the next section use many explanatory variables. Before modelling, we look at each of them individually, including those for which we do not expect a relation, so that no variable enters the model without having been checked. For each variable, @tbl-all-vars gives its share of missing values, its number of categories (or its mean) and two simple tests: its association with log income and its association with AI exposure. We use a Spearman correlation for numeric variables and a one-way ANOVA for categorical variables: a regression of the outcome on the categories, whose F-test tells whether the category means differ more than by chance.
+The models in the next section use many explanatory variables. Before modelling, we look at each of them individually, including those for which we do not expect a relation, so that no variable enters the model without having been checked. For each variable, @tbl-all-vars gives its share of missing values, its number of categories (or its mean) and two simple tests: its association with log income and its association with AI exposure. We use a Spearman correlation for numeric variables and a one-way ANOVA for categorical variables: a regression of the outcome on the categories, whose F-test tells whether the category means differ more than by chance. @fig-all-cat and @fig-all-num show the median income for each category or value.
 
 ```{python}
 #| label: tbl-all-vars
@@ -292,7 +292,7 @@ for col, name in all_variables:
         "Type": "numeric" if numeric else "categorical",
         "Missing (%)": round(tert[col].isna().mean() * 100, 1),
         "Mean / categories": f"{tert[col].mean():.2f}" if numeric else f"{tert[col].nunique()} categories",
-        "Test": "Spearman ρ" if numeric else "Kruskal-Wallis H",
+        "Test": "Spearman ρ" if numeric else "ANOVA F",
         "With income": round(stat_inc, 3),
         "p (income)": p_inc,
         "With exposure": round(stat_exp, 3),
