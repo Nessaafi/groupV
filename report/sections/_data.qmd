@@ -40,7 +40,7 @@ df, merge_info = load_analysis_data(project_root)
 tert = df[df["tertiary"] == 1].copy()
 ```
 
-Our workflow follows the structure of the project template: the original files are stored unchanged in `data/raw/`; Python scripts in `src/` clean them and save the results in `data/processed/`; the report only reads the processed files. The public tables are created with `python src/ilo_aggregate.py` and `python src/ess_data.py`. The cleaned SHP file is created by the notebook `01_shp_cleaning.ipynb` and kept locally only.
+Our workflow follows the structure of the project template: the original files are stored unchanged in `data/raw/`; Python scripts in `src/` clean them and save the results in `data/processed/`; the report only reads the processed files. The public tables are created with `python src/ilo_aggregate.py` and `python src/ess_data.py`. The cleaned SHP file is created with python src/01_shp_cleaning.py and kept locally only.
 
 After loading, the analysis dataset has `{python} f"{df.shape[0]:,}"` rows and `{python} df.shape[1]` columns, and `{python} int(df.duplicated(["idpers", "year"]).sum())` duplicated person-year rows. We do not print the first rows of the data, because the SHP contract forbids showing individual observations; only aggregated results appear in this report.
 
@@ -48,7 +48,7 @@ After loading, the analysis dataset has `{python} f"{df.shape[0]:,}"` rows and `
 
 ### General Transformations
 
-The SHP cleaning is done in the notebook `01_shp_cleaning.ipynb`. We stack the waves 2016 to 2024 of the person file, merge the imputed income file and the household file on `idpers`, `idhous` and `year`, and recode the SHP negative missing codes (-1, -2, -3, ...) to missing values. We then create the following variables:
+The SHP cleaning is done with src/01_shp_cleaning.py. We stack the waves 2016 to 2024 of the person file, merge the imputed income file and the household file on `idpers`, `idhous` and `year`, and recode the SHP negative missing codes (-1, -2, -3, ...) to missing values. We then create the following variables:
 
 - `tertiary` = 1 if ISCED 5A, 5B or 6 (SHP codes 51, 52, 60);
 - `young` = 1 if the person is aged 25 to 34;
