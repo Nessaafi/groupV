@@ -274,7 +274,8 @@ def association(data, col, target, numeric):
 
 
 rows_vars = []
-for col, name in {**numeric_vars, **categorical_vars}.items():
+all_variables = list(numeric_vars.items()) + list(categorical_vars.items())  # numeric first, then categorical
+for col, name in all_variables:
     numeric = col in numeric_vars
     stat_inc, p_inc = association(tert, col, "log_income", numeric)
     if col.startswith("exposure"):
