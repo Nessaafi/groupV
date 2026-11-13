@@ -250,11 +250,13 @@ by_year.round(3)
 The jump in observations in 2020 comes from the new SHP IV sample. Because the composition of the sample changes over time (the share of tertiary-educated employees grows from 46% to 58%), the yearly figures should not be read as a trend. The comparison before and after ChatGPT (2023-2024 vs earlier waves) is done in the models below, holding individual characteristics constant.
 ### Every explanatory variable, one by one
 
-The models in the next section use many explanatory variables. Before modelling, we look at each of them individually, including those for which we do not expect a relation, so that no variable enters the model without having been checked. For each variable, @tbl-all-vars gives its share of missing values, its number of categories (or its mean) and two simple tests: its association with log income and its association with AI exposure. We use a Spearman correlation for numeric variables and a Kruskal-Wallis test (a non-parametric version of the ANOVA) for categorical variables. @fig-all-cat and @fig-all-num show the median income for each category or value.
+The models in the next section use many explanatory variables. Before modelling, we look at each of them individually, including those for which we do not expect a relation, so that no variable enters the model without having been checked. For each variable, @tbl-all-vars gives its share of missing values, its number of categories (or its mean) and two simple tests: its association with log income and its association with AI exposure. We use a Spearman correlation for numeric variables and a one-way ANOVA for categorical variables: a regression of the outcome on the categories, whose F-test tells whether the category means differ more than by chance.
 
 ```{python}
 #| label: tbl-all-vars
-#| tbl-cap: "Every explanatory variable, one by one (tertiary-educated employees, unweighted). Spearman correlation for numeric variables, Kruskal-Wallis test for categorical variables (categories with at least 30 observations)."
+#| tbl-cap: "Every explanatory variable, one by one (tertiary-educated employees, unweighted). Spearman correlation for numeric variables, one-way ANOVA for categorical variables (categories with at least 30 observations)."
+
+import statsmodels.formula.api as smf
 numeric_vars = {"age": "Age", "activity_rate": "Activity rate (%)",
                 "exposure_mean_2025": "AI exposure (ILO 2025)", "exposure_sd_2025": "Dispersion of task exposure"}
 categorical_vars = {"sex": "Sex", "isced": "Education level (ISCED)", "pe31": "Field of study",
@@ -263,14 +265,17 @@ categorical_vars = {"sex": "Sex", "isced": "Education level (ISCED)", "pe31": "F
 
 
 def association(data, col, target, numeric):
-    # Spearman for a numeric variable, Kruskal-Wallis for a categorical one
+    # Spearman correlation for a numeric variable,
+    # one-way ANOVA (a regression on the categories) for a categorical one
     d = data[[col, target]].dropna()
     if numeric:
         return stats.spearmanr(d[col], d[target])
-    groups_c = [g[target] for _, g in d.groupby(col) if len(g) >= 30]
-    if len(groups_c) < 2:
+    counts = d[col].value_counts()
+    d = d[d[col].isin(counts[counts >= 30].index)]  # keep categories with at least 30 observations
+    if d[col].nunique() < 2:
         return np.nan, np.nan
-    return stats.kruskal(*groups_c)
+    anova = smf.ols(f"{target} ~ C({col})", data=d).fit()
+    return anova.fvalue, anova.f_pvalue  # F statistic and its p-value
 
 
 rows_vars = []
