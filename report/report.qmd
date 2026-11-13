@@ -35,8 +35,8 @@ format:
   # Use the code below if you want to render pdf, otherwise just comment it out#
   pdf:
        # wrapping the code also in the pdf (otherwise, it overflows)
-    toc: false
-    echo: false          # HIDE code completely in PDF
+    toc: true
+    echo: true          # HIDE code completely in PDF
     include-in-header:
       text: |
         \usepackage{fvextra}
