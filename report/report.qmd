@@ -6,7 +6,6 @@ author:
  - Essaafi, Nagham
  - Frangioni, Luca
  - Roubakine, Timour
-institute: University of Lausanne, Faculty of Business and Economics 
 date: November 8, 2026
 title-block-banner: "#0095C8" # chosen for the university of lausanne
 toc-location: right
