@@ -1,0 +1,66 @@
+school_type,exam_level,graduation_year,q1,median,q3
+University,Bachelor,2006,66600.0,80100.0,88800.0
+University,Bachelor,2008,67200.0,81700.0,91500.0
+University,Bachelor,2010,54800.0,75500.0,89600.0
+University,Bachelor,2012,58800.0,77900.0,93800.0
+University,Bachelor,2014,53900.0,73200.0,88300.0
+University,Bachelor,2016,58100.0,75500.0,90900.0
+University,Bachelor,2018,56600.0,74400.0,90800.0
+University,Bachelor,2020,53200.0,74400.0,89800.0
+University,Bachelor,2022,52900.0,74100.0,91200.0
+University,Bachelor,2024,53800.0,74100.0,90000.0
+University,Doctorate,2002,87600.0,103700.0,115200.0
+University,Doctorate,2004,88100.0,99400.0,112900.0
+University,Doctorate,2006,89200.0,102100.0,118300.0
+University,Doctorate,2008,88500.0,100200.0,115700.0
+University,Doctorate,2010,89400.0,101400.0,117100.0
+University,Doctorate,2012,92600.0,104500.0,119800.0
+University,Doctorate,2014,90500.0,101700.0,116300.0
+University,Doctorate,2016,90900.0,102200.0,116900.0
+University,Doctorate,2018,92100.0,102200.0,114700.0
+University,Doctorate,2020,93000.0,103400.0,118100.0
+University,Doctorate,2022,91200.0,101300.0,116500.0
+University,Doctorate,2024,91300.0,101700.0,120000.0
+University,Master,2002,62200.0,80700.0,92200.0
+University,Master,2004,62300.0,80800.0,91500.0
+University,Master,2006,62100.0,80000.0,93600.0
+University,Master,2008,65300.0,84700.0,94700.0
+University,Master,2010,70100.0,86300.0,97100.0
+University,Master,2012,70800.0,87100.0,98000.0
+University,Master,2014,65800.0,85400.0,96900.0
+University,Master,2016,64600.0,83900.0,96800.0
+University,Master,2018,66000.0,85000.0,95600.0
+University,Master,2020,69100.0,85100.0,97000.0
+University,Master,2022,67500.0,85100.0,96200.0
+University,Master,2024,65000.0,85000.0,96000.0
+University of applied sciences,Bachelor,2002,76000.0,86400.0,95600.0
+University of applied sciences,Bachelor,2004,73400.0,84700.0,93700.0
+University of applied sciences,Bachelor,2006,75400.0,85400.0,94000.0
+University of applied sciences,Bachelor,2008,74300.0,84900.0,93000.0
+University of applied sciences,Bachelor,2010,72900.0,84200.0,92700.0
+University of applied sciences,Bachelor,2012,74500.0,84900.0,93600.0
+University of applied sciences,Bachelor,2014,72700.0,82900.0,91500.0
+University of applied sciences,Bachelor,2016,72700.0,83700.0,91500.0
+University of applied sciences,Bachelor,2018,72900.0,82800.0,90300.0
+University of applied sciences,Bachelor,2020,73300.0,82900.0,91400.0
+University of applied sciences,Bachelor,2022,72300.0,82100.0,91200.0
+University of applied sciences,Bachelor,2024,72000.0,82000.0,92300.0
+University of applied sciences,Master,2010,64700.0,86300.0,100500.0
+University of applied sciences,Master,2012,71900.0,91500.0,103400.0
+University of applied sciences,Master,2014,70000.0,88300.0,105000.0
+University of applied sciences,Master,2016,74600.0,90400.0,104100.0
+University of applied sciences,Master,2018,72700.0,90000.0,103600.0
+University of applied sciences,Master,2020,75300.0,91400.0,106300.0
+University of applied sciences,Master,2022,76000.0,91200.0,106600.0
+University of applied sciences,Master,2024,78000.0,93000.0,109200.0
+University of teacher education,Teaching diploma,2004,74800.0,86100.0,103300.0
+University of teacher education,Teaching diploma,2006,73200.0,83200.0,99800.0
+University of teacher education,Teaching diploma,2008,76200.0,87100.0,102600.0
+University of teacher education,Teaching diploma,2010,80900.0,95000.0,113000.0
+University of teacher education,Teaching diploma,2012,82300.0,95800.0,110000.0
+University of teacher education,Teaching diploma,2014,80800.0,91000.0,108400.0
+University of teacher education,Teaching diploma,2016,81800.0,92800.0,108900.0
+University of teacher education,Teaching diploma,2018,82800.0,95600.0,109100.0
+University of teacher education,Teaching diploma,2020,84000.0,96800.0,111400.0
+University of teacher education,Teaching diploma,2022,82100.0,96900.0,111400.0
+University of teacher education,Teaching diploma,2024,84000.0,99000.0,116000.0

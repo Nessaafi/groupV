@@ -1,0 +1,19 @@
+school_type,exam_level,sex,graduation_year,q1,median,q3
+University,Bachelor,Total,2024,53800,74100,90000
+University,Bachelor,Men,2024,57500,77200,90000
+University,Bachelor,Women,2024,51000,72000,90000
+University,Master,Total,2024,65000,85000,96000
+University,Master,Men,2024,68400,85500,96000
+University,Master,Women,2024,64000,84000,96000
+University,Doctorate,Total,2024,91300,101700,120000
+University,Doctorate,Men,2024,92000,102000,125000
+University,Doctorate,Women,2024,90000,100100,116700
+University of applied sciences,Bachelor,Total,2024,72000,82000,92300
+University of applied sciences,Bachelor,Men,2024,75000,85200,96000
+University of applied sciences,Bachelor,Women,2024,71300,78600,88800
+University of applied sciences,Master,Total,2024,78000,93000,109200
+University of applied sciences,Master,Men,2024,80000,94000,110000
+University of applied sciences,Master,Women,2024,75400,91900,107000
+University of teacher education,Teaching diploma,Total,2024,84000,99000,116000
+University of teacher education,Teaching diploma,Men,2024,91500,106000,122200
+University of teacher education,Teaching diploma,Women,2024,82500,95800,112500
