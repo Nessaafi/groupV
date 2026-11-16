@@ -2,7 +2,7 @@
 
 Our main question is whether occupational exposure to generative AI helps to **predict** the wages of tertiary-educated workers beyond standard wage determinants. We therefore compare two versions of each model:
 
-- **Baseline model:** age, age squared, sex, education level (`isced`), field of study (`pe31`), activity rate, sector (`noga2m`), region, ISCO major group and survey year;
+- **Baseline model:** age, age squared, sex, education level (`isced`), field of study (`pe31`, missing for about 92% of observations, so a missing value is kept as its own category), activity rate, sector (`noga2m`), region, ISCO major group and survey year;
 - **Baseline + exposure:** the same variables plus the ILO exposure score of the occupation and the standard deviation of its task scores.
 
 The target is `log_income`, the log of full-time-equivalent net income in 2020 francs. We use the log because income is right-skewed (@fig-income-dist) and because differences in logs can be read as percentage differences.
@@ -12,7 +12,7 @@ We compare two families of models:
 1. **Linear regression (OLS).** It is simple, easy to interpret, and the standard model in the wage literature (Mincer-type wage equations).
 2. **Random forest.** It can capture non-linear effects and interactions (for example, exposure may matter differently by age or sector) without specifying them by hand.
 
-As in the course, 80% of the data go to the training set and 20% to the test set, and cross-validation uses 5 folds. Because each person appears in several waves, we split **by person** rather than by observation, with `GroupShuffleSplit` and `GroupKFold` from scikit-learn and the person identifier as group: all the years of one person are either in the training set or in the test set. Otherwise the model could recognise a person already seen during training, and the test error would be too optimistic (data leakage).
+As in the course, 80% of the data go to the training set and 20% to the test set, and cross-validation uses 5 folds. Because each person appears in several waves, we split **by person** rather than by observation: we apply `train_test_split`, as in the course, to the list of persons, so that all the years of one person are either in the training set or in the test set. For cross-validation, the course uses `cv=5`; we use `GroupKFold(n_splits=5)` with the person identifier as group, which is the same 5-fold cross-validation but keeps each person in one fold (the only splitting tool beyond the course). Otherwise the model could recognise a person already seen during training, and the test error would be too optimistic (data leakage).
 
 We tune the random forest with `GridSearchCV` on the training set only, and compare the training and validation scores to check for overfitting. The models are evaluated with the RMSE (in log points, so 0.30 is roughly a 30% error) and the R² on the test set.
 
@@ -21,8 +21,8 @@ We tune the random forest with `GridSearchCV` on the training set only, and comp
 #| output: false
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.model_selection import GridSearchCV, GroupKFold, GroupShuffleSplit, cross_val_score
+from sklearn.metrics import r2_score, root_mean_squared_error
+from sklearn.model_selection import GridSearchCV, GroupKFold, cross_val_score, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
@@ -43,10 +43,17 @@ X = pd.get_dummies(model_df[numeric + exposure + categorical], columns=categoric
                    drop_first=True, dtype=int)
 y = model_df["log_income"]
 
-# 80% training, 20% test, split by person: all the years of one person are in the same set
+# 80% training, 20% test, split by person: train_test_split (as in the course) is applied
+# to the list of persons, so that all the years of one person are in the same set
 groups = model_df["idpers"]
-splitter = GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
-train_idx, test_idx = next(splitter.split(X, y, groups))
+
+
+def split_by_person(seed):
+    persons_train, persons_test = train_test_split(groups.unique(), test_size=0.2, random_state=seed)
+    return np.where(groups.isin(persons_train))[0], np.where(groups.isin(persons_test))[0]
+
+
+train_idx, test_idx = split_by_person(42)
 X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
 y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
 groups_train = groups.iloc[train_idx]
@@ -59,6 +66,7 @@ X_train_base, X_test_base = X_train.drop(columns=exposure), X_test.drop(columns=
 
 - **OLS** assumes a linear relation between the features and log income, errors with constant variance, and independent observations. The log transformation reduces the skewness of income and makes the relation closer to linear. Observations are not independent, because the same person appears in several waves; moreover, exposure only varies between occupations, so thousands of observations share the same value. In the OLS wage equation we therefore cluster the standard errors by occupation. Age enters with a squared term because wages usually rise and then flatten with age.
 - **Random forest** makes no assumption on the shape of the relation, but it can overfit; this is why we tune its depth and leaf size with cross-validation.
+- **Person fixed effects** assume that the unobserved differences between persons that matter for wages are constant over time; they do not remove events that happen together with a change of occupation (promotion, new employer). Standard errors are clustered by person.
 - **Exposure** is measured at the occupation level, so it cannot capture differences between workers in the same occupation.
 
 ## Why these methods
@@ -68,6 +76,8 @@ X_train_base, X_test_base = X_train.drop(columns=exposure), X_test.drop(columns=
 - **Grid search with cross-validation** selects the random forest settings on the training set only, as in the course; the test set is used once, at the end.
 - **Train/test split and 5-fold cross-validation** follow the course, so that the models are always evaluated on data they were not trained on.
 - **The placebo test and the nested models** check whether exposure carries information of its own or only identifies the type of occupation (second part of sub-question 2).
+- **Nested prediction models over 10 person-level splits** repeat the comparison with and without exposure on other test sets, and check whether exposure adds anything beyond finer (2-digit) occupational categories.
+- **The within-person comparison (person fixed effects, [Appendix G](#sec-app-within))** uses the panel structure of the SHP: it compares each graduate with themselves when they change occupation, which removes everything that is constant for a person (ability, background) and tests whether the link across occupations only reflects which workers sort into them.
 - **The OLS wage equation** gives the direction and size of the association and tests whether it differs for young graduates and after the release of ChatGPT.
 
 ## Tuning the random forest
@@ -124,7 +134,7 @@ for model_name, model in models.items():
         rows.append({
             "Model": model_name,
             "Specification": spec,
-            "RMSE": np.sqrt(mean_squared_error(y_test, y_pred)),
+            "RMSE": root_mean_squared_error(y_test, y_pred),
             "R²": r2_score(y_test, y_pred),
         })
 
@@ -153,7 +163,8 @@ for model_name, model in models.items():
 cv_results = pd.DataFrame(cv_rows)
 
 # is the best gain from exposure larger than the variation across folds?
-best_gain = -min(delta_ols, delta_rf)  # positive = exposure lowers the RMSE
+# gain of the best model on the test set (positive = exposure lowers the RMSE)
+best_gain = -(delta_ols if best_test["Model"] == "OLS" else delta_rf)
 cv_std = cv_results["Std RMSE"].mean()
 if best_gain > cv_std:
     exposure_verdict = ("this gain is larger than the variation across folds, so exposure "
@@ -167,7 +178,7 @@ else:
 cv_results.round(4)
 ```
 
-On the test set, the best model is the `{python} best_test["Model"]` (`{python} best_test["Specification"]`), with an RMSE of `{python} f"{best_test['RMSE']:.3f}"` and an R² of `{python} f"{best_test['R²']:.3f}"` (@tbl-test-results). Adding the two exposure variables changes the test RMSE by `{python} f"{delta_ols:+.4f}"` for OLS and by `{python} f"{delta_rf:+.4f}"` for the random forest (a negative value means a better prediction). The RMSE varies by about `{python} f"{cv_std:.4f}"` across cross-validation folds (@tbl-cv-results), and `{python} exposure_verdict`.
+On the test set, the best model is the `{python} best_test["Model"]` (`{python} best_test["Specification"]`), with an RMSE of `{python} f"{best_test['RMSE']:.3f}"` and an R² of `{python} f"{best_test['R²']:.3f}"` (@tbl-test-results). Adding the two exposure variables changes the test RMSE by `{python} f"{delta_ols:+.4f}"` for OLS and by `{python} f"{delta_rf:+.4f}"` for the random forest (a negative value means a better prediction). The RMSE varies by about `{python} f"{cv_std:.4f}"` across cross-validation folds (@tbl-cv-results). We base our answer on the best model: for the `{python} best_test["Model"]`, `{python} exposure_verdict`.
 
 This result should be read with one point in mind: the baseline already contains the ISCO major group, so exposure can only add information *within* major groups. Even with 4-digit codes, all workers in the same occupation share the same exposure score, which limits what it can add.
 
@@ -196,7 +207,7 @@ for seed in range(5):
         model.fit(X_train_pl, y_train)
         y_pred = model.predict(X_test_pl)
         placebo_rows.append({"Model": model_name,
-                             "RMSE": np.sqrt(mean_squared_error(y_test, y_pred))})
+                             "RMSE": root_mean_squared_error(y_test, y_pred)})
 
 placebo_rmse = pd.DataFrame(placebo_rows).groupby("Model")["RMSE"].mean()
 
@@ -222,7 +233,7 @@ For the random forest, the real scores lower the test RMSE by `{python} f"{gain_
 
 ## Association between exposure and wages (OLS)
 
-Prediction tells us *whether* exposure adds information, but not in which direction. We therefore also estimate a linear wage equation on the full sample of tertiary-educated workers with `statsmodels`, which gives coefficients with standard errors and p-values. Because exposure is measured at the occupation level, thousands of observations share the same value, so the standard errors are "clustered" by occupation: otherwise they would be too small and the p-values too optimistic. We add two interactions: exposure × young (25-34), which corresponds to sub-question 3, and exposure × post-ChatGPT waves (2023-2024), which checks whether the association changed after the release of ChatGPT.
+Prediction tells us *whether* exposure adds information, but not in which direction. We therefore also estimate a linear wage equation on the full sample of tertiary-educated workers with `statsmodels`, which gives coefficients with standard errors and p-values. Because exposure is measured at the occupation level, thousands of observations share the same value, so the standard errors are "clustered" by occupation: otherwise they would be too small and the p-values too optimistic. We add two interactions: exposure × young (25-34), which corresponds to sub-question 3, and exposure × post-ChatGPT waves (2023-2024), which checks whether the association changed after the release of ChatGPT. This is an association, not a causal effect.
 
 ```{python}
 #| label: tbl-ols
@@ -241,7 +252,8 @@ formula = ("log_income ~ exposure_10 + exposure_10:young + exposure_10:post_chat
 # cluster by occupation: exposure only varies between occupations
 ols = smf.ols(formula, data=ols_df).fit(cov_type="cluster", cov_kwds={"groups": ols_df["isco_code"]})
 
-keep = ["exposure_10", "exposure_10:young", "exposure_10:post_chatgpt", "young", "female"]
+# "young" alone is not shown: it is the gap at exposure 0, which no occupation has
+keep = ["exposure_10", "exposure_10:young", "exposure_10:post_chatgpt", "female"]
 ols_table = pd.DataFrame({
     "Coefficient": ols.params[keep],
     "Std. error": ols.bse[keep],
@@ -269,7 +281,7 @@ ols_table.round(4)
 
 In this specification we do **not** control for the ISCO major group, because the exposure score is largely determined by the occupation: controlling for occupation groups would remove most of the variation we want to describe. The coefficient on `exposure_10` therefore tells us how much more (or less) graduates earn, on average, in occupations whose exposure is 0.1 higher, for the same age, sex, education, sector, region and year.
 
-For graduates aged 35 or more before ChatGPT (the reference group), an exposure score 0.1 higher is associated with an income about `{python} f"{pct_exp:+.1f}"`% different, holding the other variables constant. This coefficient is `{python} significance(p_exp)` (p = `{python} f"{p_exp:.3f}"`). For young graduates (25-34), the interaction coefficient is `{python} f"{coef_young:+.4f}"`, meaning that the association is `{python} young_word` for them, and this difference is `{python} significance(p_young)` (p = `{python} f"{p_young:.3f}"`). After the release of ChatGPT (2023-2024), the interaction coefficient is `{python} f"{coef_post:+.4f}"`: the association is `{python} post_word` than before, and this difference is `{python} significance(p_post)` (p = `{python} f"{p_post:.3f}"`). With only two waves after ChatGPT, this last result is a first indication rather than a conclusion.
+For graduates aged 35 or more before ChatGPT (the reference group), an exposure score 0.1 higher is associated with an income about `{python} f"{pct_exp:+.1f}"`% higher, holding the other variables constant, but this coefficient is not statistically significant at the 5% level (p = `{python} f"{p_exp:.3f}"`). For young graduates (25-34), the interaction coefficient is `{python} f"{coef_young:+.4f}"` (p = `{python} f"{p_young:.3f}"`): the association is significantly weaker for them. Their total slope is `{python} f"{ols_table.loc['exposure_10', 'Coefficient']:.4f}"` − `{python} f"{abs(coef_young):.4f}"` ≈ `{python} f"{ols_table.loc['exposure_10', 'Coefficient'] + coef_young:+.4f}"`, close to zero: among young graduates, working in a more exposed occupation is not associated with a higher income. After the release of ChatGPT (2023-2024), the interaction coefficient is `{python} f"{coef_post:+.4f}"` (p = `{python} f"{p_post:.3f}"`): we find no evidence that the association changed after ChatGPT. With only two waves after ChatGPT, this is a first indication rather than a conclusion. The coefficient of `young` alone is not shown, because it measures the gap between young and older graduates in an occupation with an exposure of 0, which does not exist.
 
 ## Nested regression models
 
@@ -304,13 +316,208 @@ p_4 = nested_table.loc["(4) Controls + major group + exposure", "p-value"]
 nested_table
 ```
 
-Without the major group, the exposure coefficient is `{python} f"{coef_3:+.4f}"` (model 3). Once the ISCO major group is controlled for, it becomes `{python} f"{coef_4:+.4f}"` (p = `{python} f"{p_4:.3f}"`, model 4, @tbl-nested). The adjusted R² goes from `{python} f"{nested_table.iloc[1, 0]:.4f}"` (model 2) to `{python} f"{nested_table.iloc[3, 0]:.4f}"` (model 4): once we know the broad type of occupation, exposure adds almost nothing to the explanation of wages. In the wage equation, exposure therefore mostly reflects the type of occupation rather than an effect of its own.
+Without the major group, the exposure coefficient is `{python} f"{coef_3:+.4f}"` and already not statistically significant (p = `{python} f"{nested_table.loc['(3) Controls + exposure', 'p-value']:.3f}"`, model 3). Once the ISCO major group is controlled for, it falls to `{python} f"{coef_4:+.4f}"` (p = `{python} f"{p_4:.3f}"`, model 4, @tbl-nested). Adding exposure to model 2 leaves the adjusted R² unchanged at `{python} f"{nested_table.iloc[3, 0]:.4f}"` (model 4): once we know the broad type of occupation, exposure adds nothing to the explanation of wages. In the wage equation, exposure therefore mostly reflects the type of occupation rather than an effect of its own.
+
+## Exposure vs finer occupational categories (several person-level splits)
+
+The placebo test and the nested OLS models use one train/test split and only the ISCO major group (9 categories). Two questions remain: does the gain from exposure survive other splits, and does exposure add anything beyond **finer** occupational categories? We therefore compare seven feature sets, each estimated with OLS and with the random forest (same settings as above), on 10 different person-level splits (80% / 20%, `train_test_split` on the list of persons, as above, with 10 different random seeds). For each split we compute the gain in test RMSE relative to model A, in % of the RMSE of A, and we report its mean and standard deviation across the 10 splits. A gain smaller than its standard deviation is not reliable.
+
+| Model | Variables | What it tests |
+|---|---|---|
+| A | Controls only: age, age², sex, activity rate, education, field of study, sector, region, year | Reference |
+| B | A + exposure | Does exposure reduce the prediction error? |
+| C | A + placebo exposure (scores shuffled between occupations) | Same number of distinct values, without the link to AI |
+| D | A + ISCO major group (1 digit) | Broad type of occupation (= the baseline model above) |
+| E | D + exposure | Does exposure add anything within major groups? |
+| F | A + ISCO 2-digit group | Finer type of occupation, no AI |
+| G | F + exposure | Does exposure add anything beyond fine occupational categories? |
+
+: Feature sets compared over 10 person-level splits {#tbl-feature-sets}
+
+```{python}
+#| label: tbl-nested-pred
+#| tbl-cap: "Gain in test RMSE relative to model A (in % of the RMSE of A; positive = better prediction), mean and standard deviation over 10 person-level splits. Tertiary-educated employees. Exposure = ILO 2025 occupation mean score."
+nest_df = model_df.copy()
+nest_df["isco2"] = nest_df["isco_code"].str[:2]
+
+# placebo: one value per occupation, but scores shuffled between occupations
+occ_mean = nest_df.groupby("isco_code")["exposure_mean_2025"].first()
+rng = np.random.default_rng(42)
+shuffled_mean = pd.Series(rng.permutation(occ_mean.values), index=occ_mean.index)
+nest_df["placebo"] = nest_df["isco_code"].map(shuffled_mean)
+placebo_corr = nest_df["exposure_mean_2025"].corr(nest_df["placebo"])
+
+# controls (A) = the dummies of X, without exposure and without the ISCO major group
+isco1_cols = [c for c in X.columns if c.startswith("isco1_")]
+base_cols = [c for c in X.columns if c not in exposure and c not in isco1_cols]
+isco2_dummies = pd.get_dummies(nest_df["isco2"], prefix="isco2", drop_first=True, dtype=int)
+X_nest = pd.concat([X[base_cols + isco1_cols], nest_df[["exposure_mean_2025", "placebo"]],
+                    isco2_dummies], axis=1)
+isco2_cols = list(isco2_dummies.columns)
+
+feature_sets = {
+    "A": base_cols,
+    "B": base_cols + ["exposure_mean_2025"],
+    "C": base_cols + ["placebo"],
+    "D": base_cols + isco1_cols,
+    "E": base_cols + isco1_cols + ["exposure_mean_2025"],
+    "F": base_cols + isco2_cols,
+    "G": base_cols + isco2_cols + ["exposure_mean_2025"],
+}
+
+split_rows = []
+for split_nb in range(10):
+    tr, te = split_by_person(split_nb)
+    for model_name, model in models.items():
+        for set_name, cols in feature_sets.items():
+            model.fit(X_nest.iloc[tr][cols], y.iloc[tr])
+            pred = model.predict(X_nest.iloc[te][cols])
+            split_rows.append({"split": split_nb, "Model": model_name, "Set": set_name,
+                               "RMSE": root_mean_squared_error(y.iloc[te], pred)})
+
+split_results = pd.DataFrame(split_rows)
+# gain in % of the RMSE of model A, on the same split and with the same algorithm
+rmse_a = split_results[split_results["Set"] == "A"][["split", "Model", "RMSE"]]
+split_results = split_results.merge(rmse_a.rename(columns={"RMSE": "RMSE_A"}), on=["split", "Model"])
+split_results["gain"] = (1 - split_results["RMSE"] / split_results["RMSE_A"]) * 100
+
+nested_pred = split_results.pivot_table(index="Set", columns="Model", values="gain", aggfunc=["mean", "std"])
+nested_pred.columns = [f"{m}: {'mean' if s == 'mean' else 'std'} gain (%)" for s, m in nested_pred.columns]
+nested_pred = nested_pred[sorted(nested_pred.columns)]
+mean_rmse_a = rmse_a.groupby("Model")["RMSE"].mean()
+
+# values used in the text (OLS first, see below)
+ols_m, ols_s = "OLS: mean gain (%)", "OLS: std gain (%)"
+rf_m, rf_s = "Random forest: mean gain (%)", "Random forest: std gain (%)"
+gain_b, sd_b = nested_pred.loc["B", ols_m], nested_pred.loc["B", ols_s]
+gain_c = nested_pred.loc["C", ols_m]
+gain_d, gain_f = nested_pred.loc["D", ols_m], nested_pred.loc["F", ols_m]
+add_e = nested_pred.loc["E", ols_m] - nested_pred.loc["D", ols_m]  # what exposure adds within major groups
+add_g = nested_pred.loc["G", ols_m] - nested_pred.loc["F", ols_m]  # what exposure adds within 2-digit groups
+add_g_rf = nested_pred.loc["G", rf_m] - nested_pred.loc["F", rf_m]
+n_isco2 = nest_df["isco2"].nunique()
+
+
+def reliable(gain, sd):
+    return "larger than its standard deviation" if gain > sd else "not larger than its standard deviation"
+
+
+nested_pred.round(2)
+```
+
+The placebo has almost no correlation with the real scores (`{python} f"{placebo_corr:+.2f}"`). With OLS, exposure alone (model B) gives a mean gain of `{python} f"{gain_b:.2f}"`%, a gain `{python} reliable(gain_b, sd_b)` (`{python} f"{sd_b:.2f}"`), while the placebo (model C) gives `{python} f"{gain_c:.2f}"`%. The occupational categories alone do `{python} "better" if max(gain_d, gain_f) > gain_b else "worse"` than exposure: `{python} f"{gain_d:.2f}"`% with the major group (model D) and `{python} f"{gain_f:.2f}"`% with the `{python} n_isco2` two-digit groups (model F). Once these categories are in the model, exposure adds `{python} f"{add_e:+.2f}"` percentage points within major groups (E vs D) and `{python} f"{add_g:+.2f}"` points within two-digit groups (G vs F) (@tbl-nested-pred).
+
+We read the OLS results first, for two reasons. The random forest settings were chosen on the baseline model **with** exposure, which may favour the models that contain it. And a forest can use any number that takes one value per occupation as a label for the occupation, whatever its meaning, while in a linear model a score unrelated to wages cannot help. In the random forest, exposure adds `{python} f"{add_g_rf:+.2f}"` points beyond the two-digit groups, which mainly shows that a forest finds it easier to split on one ordered number than on `{python} n_isco2 - 1` dummies.
+
+Together with the placebo test and the nested OLS models, this confirms the answer to the second part of sub-question 2: exposure is a compact summary of the type of occupation, ordered in a way that correlates with wages, but it carries little information beyond standard occupational categories. The average test RMSE of model A is `{python} f"{mean_rmse_a['OLS']:.3f}"` for OLS, so even the best feature set reduces a typical prediction error of about `{python} f"{100 * mean_rmse_a['OLS']:.0f}"`% by only a few percent.
 
 ## Discussion
 
-These results give a first answer to our sub-questions 2 and 3. Adding exposure lowers the prediction error of the random forest slightly, by a little more than the variation across cross-validation folds. However, placebo scores already give a large part of this gain, and in the nested models exposure is no longer significant once the ISCO major group is controlled for: much of what exposure brings comes from identifying the type of occupation (sub-question 2). For young graduates, the relation between exposure and wages is weaker than for older graduates (sub-question 3). The question of whether the best-paid occupations are the most exposed (sub-question 1) was answered descriptively in the EDA (@fig-ess-scatter, @fig-occ-scatter). The augmentation vs automation extension (sub-question 4) will be done in the final report.
+```{python}
+#| label: within-compute
+#| output: false
+# within-person comparison (person fixed effects): computed here, tables shown in Appendix G
+import statsmodels.api as sm
 
-The literature expects generative AI to affect well-paid, highly educated occupations more than earlier automation did [@eloundou2024; @gmyrek2025]. Across occupations, better-paid occupations are indeed more exposed, both in the official ESS data and among graduates in the SHP (@fig-ess-scatter, @fig-occ-scatter). Once age, education, sector and the type of occupation are held constant, however, the association becomes small and not statistically significant (@tbl-ols, @tbl-nested). The positive link across occupations does not mean that AI raises wages: exposed occupations were already better paid before ChatGPT, and the ILO index mostly describes augmentation rather than replacement [@gmyrek2023].
+
+def within_sample(d):
+    d = d[d["exposure_source"] == "isco4"].copy()
+    n_years = d.groupby("idpers")["year"].transform("nunique")
+    d = d[n_years >= 2].copy()
+    d["expo10"] = d["exposure_mean_2025"] * 10
+    d["age2"] = d["age"] ** 2
+    d["isco2"] = d["isco_code"].str[:2]
+    for col in ["isced", "region", "year", "isco1"]:
+        d[col] = d[col].astype(str)
+    return d.sort_values(["idpers", "year"])
+
+
+within_samples = {
+    "Tertiary-educated": within_sample(df[df["tertiary"] == 1]),
+    "All employees": within_sample(df),
+}
+
+sample_rows = []
+for name, d in within_samples.items():
+    change = d.groupby("idpers")["expo10"].diff().abs() / 10   # change from one observed year to the next
+    sample_rows.append({
+        "Sample": name,
+        "Observations": len(d),
+        "Persons": d["idpers"].nunique(),
+        "Persons changing 2-digit ISCO group": int((d.groupby("idpers")["isco2"].nunique() > 1).sum()),
+        "Persons whose exposure changes": int((d.groupby("idpers")["expo10"].nunique() > 1).sum()),
+        "Median size of a change in exposure": round(change[change > 0].median(), 3),
+    })
+within_info = pd.DataFrame(sample_rows).set_index("Sample")
+
+
+def demean(data, persons):
+    # each person's deviation from their own mean
+    return data - data.groupby(persons).transform("mean")
+
+
+def within_models(d, sample_name):
+    y_w = d["log_income"]
+    persons = d["idpers"]
+    years = pd.get_dummies(d["year"], prefix="y", drop_first=True, dtype=int)
+    fixed = pd.get_dummies(d[["isced", "region"]], drop_first=True, dtype=int)
+    major = pd.get_dummies(d["isco1"], prefix="isco1", drop_first=True, dtype=int)
+
+    specs = {
+        "(1) Pooled OLS": (pd.concat([d[["expo10", "age", "age2", "female"]], years, fixed], axis=1), False),
+        "(2) Person fixed effects": (pd.concat([d[["expo10", "age2"]], years], axis=1), True),
+        "(3) Fixed effects + major group": (pd.concat([d[["expo10", "age2"]], years, major], axis=1), True),
+    }
+    rows = []
+    for name, (X_w, fixed_effects) in specs.items():
+        if fixed_effects:
+            X_est, y_est = demean(X_w, persons), demean(y_w, persons)
+        else:
+            X_est, y_est = sm.add_constant(X_w), y_w
+        fit = sm.OLS(y_est, X_est).fit(cov_type="cluster", cov_kwds={"groups": persons})
+        b, se = fit.params["expo10"], fit.bse["expo10"]
+        rows.append({"Sample": sample_name, "Model": name,
+                     "Coef. (%)": 100 * b, "95% CI low": 100 * (b - 1.96 * se),
+                     "95% CI high": 100 * (b + 1.96 * se), "p-value": fit.pvalues["expo10"],
+                     "Observations": int(fit.nobs), "Persons": persons.nunique()})
+    return rows
+
+
+within_rows = []
+for name, d in within_samples.items():
+    within_rows += within_models(d, name)
+within_table = pd.DataFrame(within_rows).set_index(["Sample", "Model"])
+
+w_coef = within_table["Coef. (%)"]
+w_p = within_table["p-value"]
+t_pooled, t_fe, t_fe_major = w_coef["Tertiary-educated"]
+a_pooled, a_fe, a_fe_major = w_coef["All employees"]
+p_t_fe, p_t_fe_major = w_p["Tertiary-educated"].iloc[1], w_p["Tertiary-educated"].iloc[2]
+p_a_fe, p_a_fe_major = w_p["All employees"].iloc[1], w_p["All employees"].iloc[2]
+n_t_changers = within_info.loc["Tertiary-educated", "Persons whose exposure changes"]
+n_a_changers = within_info.loc["All employees", "Persons whose exposure changes"]
+
+# what happens when we also control for the major group (model 3)
+if t_fe_major > t_fe:
+    major_text = ("The estimate rises when we control for the major group. A plausible explanation is moves "
+                  "into clerical occupations (major group 4), which are the most exposed to generative AI but "
+                  "relatively low-paid: when a worker moves from professional to clerical work, exposure rises "
+                  "while the wage falls because of the change in skill level, not because of exposure. This "
+                  "interpretation is a hypothesis that we did not test directly.")
+else:
+    major_text = ("The estimate does not rise when we control for the major group, so the within-person link "
+                  "partly runs through changes in skill level (moves between major groups, promotions).")
+sorting_word = "smaller than" if t_fe < t_pooled else "not smaller than"
+if t_fe < t_pooled:
+    sorting_text = ("part of the link across occupations reflects which workers sort into exposed "
+                    "occupations rather than the occupation itself")
+else:
+    sorting_text = "the link across occupations is not explained by the fixed characteristics of the workers"
+```
+
+These results give a first answer to our sub-questions 2 and 3. For the best model on the test set (`{python} best_test["Model"]`), adding exposure changes the RMSE by only `{python} f"{(delta_ols if best_test['Model'] == 'OLS' else delta_rf):+.4f}"`, less in absolute value than the variation across folds (`{python} f"{cv_std:.4f}"`): exposure does not clearly improve wage prediction. For the random forest, adding exposure changes the RMSE by `{python} f"{delta_rf:+.4f}"`, but the forest remains `{python} "less" if rmse["Random forest", "Baseline + exposure"] > rmse["OLS", "Baseline + exposure"] else "more"` accurate than OLS, and the placebo scores change it by `{python} f"{-gain_rf_placebo:+.4f}"`. In the nested models, exposure adds nothing to the adjusted R² once the ISCO major group is controlled for. What exposure brings to the models therefore mostly comes from identifying the type of occupation (sub-question 2). Over 10 person-level splits, the ISCO groups alone reduce the OLS prediction error more than exposure, and exposure adds `{python} f"{add_g:+.2f}"` percentage points once the two-digit groups are included (@tbl-nested-pred). As a robustness check, [Appendix G](#sec-app-within) uses the panel structure of the SHP and compares each graduate with themselves when they change occupation (person fixed effects). The association is then `{python} sorting_word` the comparison across persons (`{python} f"{t_fe:+.1f}"`% vs `{python} f"{t_pooled:+.1f}"`% for 0.1 more exposure, @tbl-within), and the within-person estimate is imprecise. This suggests that `{python} sorting_text`. For young graduates, the association between exposure and wages is significantly weaker than for older graduates, and close to zero in total (sub-question 3). Sub-question 1 was answered descriptively in the EDA: better-paid occupations tend to be more exposed, but income is highest in the middle quintile of exposure, not in the most exposed one (@fig-ess-scatter, @fig-occ-scatter, @fig-young). The augmentation vs automation extension (sub-question 4) will be done in the final report.
+
+The literature expects generative AI to affect well-paid, highly educated occupations more than earlier automation did [@eloundou2024; @gmyrek2025]. Across occupation groups, better-paid occupations are indeed more exposed in the official ESS data (@fig-ess-scatter). Among graduates in the SHP, we find `{python} occ_relation` relation across occupations (@fig-occ-scatter), and income is highest in the middle quintile of exposure rather than in the most exposed one (@fig-young). Once age, education, sector and the type of occupation are held constant, however, the association becomes small and not statistically significant (@tbl-ols, @tbl-nested). The positive link across occupations does not mean that AI raises wages: exposed occupations were already better paid before ChatGPT, and the ILO index mostly describes augmentation rather than replacement [@gmyrek2023].
 
 For future graduates, the practical implication is that a degree does not protect from exposure to generative AI: many graduate occupations are among the most exposed.
 Whether this exposure turns into lower or higher wages cannot be seen yet with two waves after ChatGPT; following the next SHP waves is needed before drawing conclusions for career choices or training policies.
