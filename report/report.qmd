@@ -5,7 +5,6 @@ author:
  - Essaafi, Nagham
  - Frangioni, Luca
  - Roubakine, Timour
-
 institute: University of Lausanne, Faculty of Business and Economics 
 date: November 8, 2026
 title-block-banner: "#0095C8" # chosen for the university of lausanne
@@ -53,7 +52,7 @@ format:
 
 jupyter: python3
 abstract: |
-    Since the release of ChatGPT, generative AI is expected to affect highly educated occupations more than earlier waves of automation. We study whether occupational exposure to generative AI is associated with the wages of tertiary-educated employees in Switzerland, and whether it improves wage prediction. We link the Swiss Household Panel (2016-2024) with the ILO (2025) exposure index through 4-digit ISCO-08 codes. Graduates work in more exposed occupations than other employees, and better-paid occupations tend to be more exposed. However, adding exposure to a wage model improves prediction on unseen individuals only slightly, and a placebo test and nested regressions suggest that much of this gain comes from identifying the type of occupation. The association is weaker for young graduates. With only two waves after ChatGPT, these results describe associations rather than effects of AI.
+    Since the release of ChatGPT, generative AI is expected to affect highly educated occupations more than earlier waves of automation. We study whether occupational exposure to generative AI is associated with the wages of tertiary-educated employees in Switzerland, and whether it improves wage prediction. We link the Swiss Household Panel (2016-2024) with the ILO (2025) exposure index through 4-digit ISCO-08 codes. Graduates work in more exposed occupations than other employees, and better-paid occupations tend to be more exposed. However, adding exposure to a wage model improves prediction on unseen individuals only slightly, and a placebo test and nested regressions suggest that much of this gain comes from identifying the type of occupation. The association is weaker for young graduates. Following the same graduates over time, the association is smaller and less precise when each graduate is compared with themselves after a change of occupation, which suggests that part of the link across occupations reflects which workers sort into them. With only two waves after ChatGPT, these results describe associations rather than effects of AI.
 
 execute: 
   warning: false
@@ -76,7 +75,7 @@ execute:
 
 # Appendices {.unnumbered}
 
-These appendices compare the relation between AI exposure and wages across subgroups of tertiary-educated employees. They use the same data and the same tools as the EDA. For each group we report the number of observations, the weighted mean exposure, the median FTE income, the Spearman correlation between exposure and log income, and the difference in median income between the most and the least exposed quintile (quintiles defined on all graduates, as in @fig-young). These are descriptive comparisons: groups also differ in age, sector and occupation.
+Appendices A to E compare the relation between AI exposure and wages across subgroups of tertiary-educated employees. They use the same data and the same tools as the EDA. For each group we report the number of observations, the weighted mean exposure, the median FTE income, the Spearman correlation between exposure and log income, and the difference in median income between the most and the least exposed quintile (quintiles defined on all graduates, as in @fig-young). These are descriptive comparisons: groups also differ in age, sector and occupation. Appendix F describes the starting salaries of graduates with official data, and Appendix G gives details on the occupation changers used in the within-person comparison.
 
 ```{python}
 #| label: appendix-setup
@@ -204,6 +203,7 @@ app_sector
 ```
 
 The most exposed region is `{python} app_region.index[0]` and the least exposed is `{python} app_region.index[-1]` (@tbl-app-region). Differences between sectors are much larger than between regions (@tbl-app-sector), which is expected since exposure depends on the occupation, and occupations depend strongly on the sector.
+
 ## Appendix F: Starting salaries of graduates (EHA) {#sec-app-eha .unnumbered}
 
 The FSO survey of higher education graduates (EHA) gives the standardized gross annual income (full-time equivalent) one year after graduation, for graduates working in Switzerland. It is public, aggregated data: it cannot be linked to the SHP, but it describes the starting point of the careers we study.
@@ -220,7 +220,7 @@ plt.figure(figsize=(8, 4.5))
 sns.lineplot(data=eha_trend, x="graduation_year", y="median", hue="degree", marker="o")
 plt.xlabel("Graduation year")
 plt.ylabel("Median gross FTE income (CHF)")
-plt.legend(title="", fontsize=8)
+plt.legend(title="", fontsize=8, bbox_to_anchor=(1.02, 1), loc="upper left")  # legend outside the plot
 plt.tight_layout()
 plt.show()
 
@@ -229,7 +229,7 @@ master_2014 = master_uni.loc[master_uni["graduation_year"] == 2014, "median"].il
 master_2024 = master_uni.loc[master_uni["graduation_year"] == 2024, "median"].iloc[0]
 ```
 
-Starting salaries are very stable over time (@fig-app-eha-trend). The median income of university Master graduates is CHF `{python} f"{master_2024:,.0f}"` for the 2024 cohort, against CHF `{python} f"{master_2014:,.0f}"` for the 2014 cohort. The 2022 and 2024 cohorts, who entered the labour market after the release of ChatGPT, do not show a break in starting salaries.
+Starting salaries change little over time for most degrees, but not for all (@fig-app-eha-trend). The median income of university Master graduates is CHF `{python} f"{master_2024:,.0f}"` for the 2024 cohort, against CHF `{python} f"{master_2014:,.0f}"` for the 2014 cohort. In contrast, the starting salary of university Bachelor graduates falls from about CHF 80,000 (2006 cohort) to about CHF 74,000 (2024 cohort), while that of teaching diplomas rises from about CHF 86,000 (2004 cohort) to about CHF 99,000 (2024 cohort). The 2022 and 2024 cohorts, who entered the labour market after the release of ChatGPT, do not show a break in starting salaries.
 
 ```{python}
 #| label: tbl-app-eha-field
@@ -256,3 +256,42 @@ sex_table
 Among Master graduates, Economics and business and Medicine graduates have the highest starting salaries, and Law graduates the lowest (@tbl-app-eha-field). Already one year after graduation, women earn less than men for every degree (@tbl-app-eha-sex), but the gap is small for university Master graduates compared with the gap we observe at older ages in the SHP.
 
 As a rough consistency check, the median net FTE income of tertiary-educated employees aged 25-29 in the SHP is CHF `{python} f"{shp_young_median:,.0f}"`. This is below the EHA medians, as expected: SHP incomes are net of social contributions (roughly 12-15% of the gross wage), include higher vocational graduates, and cover several years after graduation rather than exactly one. A full comparison will be part of the final report.
+
+## Appendix G: Occupation changers in the panel {#sec-app-within .unnumbered}
+
+The within-person comparison (@tbl-within) relies only on persons whose occupation changes between two waves. Before estimating it, we checked that there are enough of them, at three levels of detail: 4-digit codes (upper bound, which includes coding noise, for example the same job coded 2512 one year and 2514 the next), 2-digit groups (a different type of occupation) and major groups (a change of skill level, almost certainly real but rarer). We count these persons with all codes and with exact 4-digit codes only, because a vague code completed with zeros (for example 2000 one year, 2512 the next) creates an artificial change of occupation.
+
+```{python}
+#| label: tbl-app-changers
+#| tbl-cap: "Tertiary-educated persons observed at least two years who change occupation, by level of detail of the ISCO code"
+tert_panel = tert[tert.groupby("idpers")["year"].transform("nunique") >= 2].copy()
+tert_panel["isco2"] = tert_panel["isco_code"].str[:2]
+tert_exact = tert_panel[tert_panel["exposure_source"] == "isco4"]
+
+changer_rows = []
+for level, col in [("4 digits", "isco_code"), ("2 digits", "isco2"), ("Major group (1 digit)", "isco1")]:
+    changer_rows.append({
+        "Level": level,
+        "All codes": int((tert_panel.groupby("idpers")[col].nunique() > 1).sum()),
+        "Exact 4-digit codes only": int((tert_exact.groupby("idpers")[col].nunique() > 1).sum()),
+    })
+app_changers = pd.DataFrame(changer_rows).set_index("Level")
+app_changers
+```
+
+```{python}
+#| label: app-within-check
+#| output: false
+# check: the fixed-effects coefficient is the one of a LinearRegression on the demeaned data
+from sklearn.linear_model import LinearRegression
+
+d_check = within_samples["Tertiary-educated"]
+years_check = pd.get_dummies(d_check["year"], prefix="y", drop_first=True, dtype=int)
+X_check = demean(pd.concat([d_check[["expo10", "age2"]], years_check], axis=1), d_check["idpers"])
+y_check = demean(d_check["log_income"], d_check["idpers"])
+lr_check = LinearRegression(fit_intercept=False).fit(X_check, y_check)
+coef_check = 100 * lr_check.coef_[0]
+```
+
+Of the `{python} f"{tert_panel['idpers'].nunique():,}"` graduates observed at least two years, `{python} f"{app_changers.loc['2 digits', 'All codes']:,}"` change 2-digit group with all codes, and `{python} f"{app_changers.loc['2 digits', 'Exact 4-digit codes only']:,}"` once the vague codes are removed (@tbl-app-changers). Removing the vague codes therefore eliminates a part of the changes that only come from the coding, which is why the within-person comparison uses exact codes only. As a check of the method, a `LinearRegression` without intercept on the demeaned data gives a coefficient of `{python} f"{coef_check:+.2f}"`% for model 2, the same as `statsmodels` (`{python} f"{t_fe:+.2f}"`%, @tbl-within): `statsmodels` is used only for the clustered standard errors.
+
