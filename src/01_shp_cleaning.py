@@ -4,10 +4,10 @@
 import pandas as pd
 import numpy as np
 
-PATH_P = "PASTE_THE_PATH_HERE/shplong_p_user.dta"
-PATH_INC = "PASTE_THE_PATH_HERE/imputed_income_pers_long_shp.dta"
-PATH_H = "PASTE_THE_PATH_HERE/shplong_h_user.dta"
-OUTPUT = "shp_population_income.parquet"
+PATH_P = "data/raw/SHP/shplong_p_user.dta"
+PATH_INC = "data/raw/SHP/imputed_income_pers_long_shp.dta"
+PATH_H = "data/raw/SHP/shplong_h_user.dta"
+OUTPUT = "data/processed/shp_population_income.parquet"
 
 # load only the columns we need, keeping the numeric codes
 COLS_P = ["idpers", "year", "idhous", "pdate", "age", "sex", "isced", "pe31",
