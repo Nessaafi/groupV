@@ -30,6 +30,9 @@ format:
           .quarto-title-banner a {
             color: #000000;
           }
+        p {
+          text-align: justify;
+        }
         </style>
   ##############################################################################
   # Use the code below if you want to render pdf, otherwise just comment it out#
