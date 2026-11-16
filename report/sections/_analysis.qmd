@@ -222,7 +222,7 @@ For the random forest, the real scores lower the test RMSE by `{python} f"{gain_
 
 ## Association between exposure and wages (OLS)
 
-Prediction tells us *whether* exposure adds information, but not in which direction. We therefore also estimate a linear wage equation on the full sample of tertiary-educated workers with `statsmodels`, which gives coefficients with standard errors and p-values. Because exposure is measured at the occupation level, thousands of observations share the same value, so the standard errors are "clustered" by occupation: otherwise they would be too small and the p-values too optimistic. We add two interactions that correspond to our sub-questions: exposure × young (25-34), and exposure × post-ChatGPT waves (2023-2024). This is an association, not a causal effect.
+Prediction tells us *whether* exposure adds information, but not in which direction. We therefore also estimate a linear wage equation on the full sample of tertiary-educated workers with `statsmodels`, which gives coefficients with standard errors and p-values. Because exposure is measured at the occupation level, thousands of observations share the same value, so the standard errors are "clustered" by occupation: otherwise they would be too small and the p-values too optimistic. We add two interactions: exposure × young (25-34), which corresponds to sub-question 3, and exposure × post-ChatGPT waves (2023-2024), which checks whether the association changed after the release of ChatGPT.
 
 ```{python}
 #| label: tbl-ols
