@@ -11,7 +11,7 @@ import pandas as pd
 import seaborn as sns
 from scipy import stats
 
-from analysis_data import ISCO1_LABELS, load_ilo
+from analysis_data import ISCO1_LABELS, REGION_LABELS, load_ilo
 
 sns.set_theme(style="whitegrid")
 
@@ -316,12 +316,22 @@ all_vars_display
 
 ```{python}
 #| label: fig-all-cat
-#| fig-cap: "Median FTE income of tertiary-educated employees by category, for each categorical variable (categories with at least 30 observations; codes as in the SHP codebook)"
+#| fig-cap: "Median FTE income of tertiary-educated employees by category, for each categorical variable (categories with at least 30 observations; field of study, sector and urban / rural: codes as in the SHP codebook)"
+labels_for_plot = {
+    "sex": {1: "Men", 2: "Women"},
+    "isced": {51: "5A", 52: "5B", 60: "6"},
+    "region": REGION_LABELS,
+    "isco1": ISCO1_LABELS,
+    "young": {0: "35-65", 1: "25-34"},
+}
 fig, axes = plt.subplots(3, 3, figsize=(10, 9))
 for ax, (col, name) in zip(axes.flat, categorical_vars.items()):
     med = tert.groupby(col)["income_fte"].agg(["median", "size"])
     med = med[med["size"] >= 30]  # small categories hidden (noise and confidentiality)
-    ax.bar(med.index.astype(str), med["median"], color="#9ecae1")
+    # names instead of codes when the meaning of the code is known
+    names = [str(labels_for_plot.get(col, {}).get(k, int(k) if isinstance(k, float) else k))
+             for k in med.index]
+    ax.bar(names, med["median"], color="#9ecae1")
     ax.set_title(name, fontsize=10)
     ax.tick_params(axis="x", labelrotation=90, labelsize=7)
 fig.supylabel("Median FTE income (CHF 2020)")
