@@ -13,3 +13,4 @@ data/raw/SHP/
 *.dta
 *.zip
 data/processed/shp_*
+Data/private/
