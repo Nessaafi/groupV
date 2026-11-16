@@ -1,5 +1,6 @@
 ---
 title: Paid to Be Replaced? Generative AI Exposure and Wages of Tertiary Graduates in Switzerland
+institute: University of Lausanne, Faculty of Business and Economics 
 author:
  - Cetaj, Jetemira
  - Essaafi, Nagham
