@@ -52,7 +52,7 @@ format:
 
 jupyter: python3
 abstract: |
-    Since the release of ChatGPT, generative AI is expected to affect highly educated occupations more than earlier waves of automation. We study whether occupational exposure to generative AI is associated with the wages of tertiary-educated employees in Switzerland, and whether it improves wage prediction. We link the Swiss Household Panel (2016-2024) with the ILO (2025) exposure index through 4-digit ISCO-08 codes. Graduates work in more exposed occupations than other employees, and better-paid occupations tend to be more exposed. However, adding exposure to a wage model improves prediction on unseen individuals only slightly, and a placebo test and nested regressions suggest that much of this gain comes from identifying the type of occupation. The association is weaker for young graduates. Following the same graduates over time, the association is smaller and less precise when each graduate is compared with themselves after a change of occupation, which suggests that part of the link across occupations reflects which workers sort into them. With only two waves after ChatGPT, these results describe associations rather than effects of AI.
+    Since the release of ChatGPT, generative AI is expected to affect highly educated occupations more than earlier waves of automation. We study whether occupational exposure to generative AI is associated with the wages of tertiary-educated employees in Switzerland, and whether it improves wage prediction. We link the Swiss Household Panel (2016-2024) with the ILO (2025) exposure index through 4-digit ISCO-08 codes. Graduates work in more exposed occupations than other employees, and better-paid occupations tend to be more exposed, but only up to a point: the most exposed occupations include clerical jobs, which are only moderately paid. However, adding exposure to a wage model barely improves prediction on unseen individuals, and a placebo test and nested regressions suggest that what exposure adds mostly comes from identifying the type of occupation, even with 2-digit occupation groups. The association is weaker for young graduates, for whom it is close to zero. Following the same graduates over time, the association is smaller and less precise when each graduate is compared with themselves after a change of occupation, which suggests that part of the link across occupations reflects which workers sort into them. With only two waves after ChatGPT, these results describe associations rather than effects of AI.
 
 execute: 
   warning: false
@@ -75,7 +75,7 @@ execute:
 
 # Appendices {.unnumbered}
 
-Appendices A to E compare the relation between AI exposure and wages across subgroups of tertiary-educated employees. They use the same data and the same tools as the EDA. For each group we report the number of observations, the weighted mean exposure, the median FTE income, the Spearman correlation between exposure and log income, and the difference in median income between the most and the least exposed quintile (quintiles defined on all graduates, as in @fig-young). These are descriptive comparisons: groups also differ in age, sector and occupation. Appendix F describes the starting salaries of graduates with official data, and Appendix G gives details on the occupation changers used in the within-person comparison.
+Appendices A to E compare the relation between AI exposure and wages across subgroups of tertiary-educated employees. They use the same data and the same tools as the EDA. For each group we report the number of observations, the weighted mean exposure, the median FTE income, the Spearman correlation between exposure and log income, and the difference in median income between the most and the least exposed quintile (quintiles defined on all graduates, as in @fig-young). These are descriptive comparisons: groups also differ in age, sector and occupation. Appendix F describes the starting salaries of graduates with official data, and Appendix G gives a within-person robustness check, which compares each graduate with themselves when they change occupation.
 
 ```{python}
 #| label: appendix-setup
@@ -257,9 +257,25 @@ Among Master graduates, Economics and business and Medicine graduates have the h
 
 As a rough consistency check, the median net FTE income of tertiary-educated employees aged 25-29 in the SHP is CHF `{python} f"{shp_young_median:,.0f}"`. This is below the EHA medians, as expected: SHP incomes are net of social contributions (roughly 12-15% of the gross wage), include higher vocational graduates, and cover several years after graduation rather than exactly one. A full comparison will be part of the final report.
 
-## Appendix G: Occupation changers in the panel {#sec-app-within .unnumbered}
+## Appendix G: Within-person comparison (graduates who change occupation) {#sec-app-within .unnumbered}
 
-The within-person comparison (@tbl-within) relies only on persons whose occupation changes between two waves. Before estimating it, we checked that there are enough of them, at three levels of detail: 4-digit codes (upper bound, which includes coding noise, for example the same job coded 2512 one year and 2514 the next), 2-digit groups (a different type of occupation) and major groups (a change of skill level, almost certainly real but rarer). We count these persons with all codes and with exact 4-digit codes only, because a vague code completed with zeros (for example 2000 one year, 2512 the next) creates an artificial change of occupation.
+All the models of the main analysis compare **different** persons. If exposed occupations pay more, it may simply be because more qualified or more able persons work in them (*sorting*). The panel allows a stricter comparison: we compare **each person with themselves** in different years. Everything that does not change for a person (ability, family background, quality of the degree) then drops out, and the association is identified only by persons whose occupation, and therefore exposure, changes over time.
+
+To do this, we subtract from each variable the mean of the person over the years (the *within* or *fixed-effects* estimator). In the model
+
+$$
+\log w_{it} = \beta \, \text{expo}_{it} + \gamma_t + \alpha_i + X_{it}'\delta + \varepsilon_{it},
+$$
+
+the person effect $\alpha_i$ is constant, so it disappears once the person mean is subtracted. The coefficient $\beta$ is then exactly the coefficient of a `LinearRegression` (course) on the demeaned data, which we compute with `groupby().transform("mean")`; we use `statsmodels` only to obtain standard errors clustered **by person**, since the observations of one person are not independent. Variables that never change for a person (sex, education level) also disappear, and linear age is dropped because, for one person, it increases exactly like the survey year.
+
+We compare three models: (1) pooled OLS, a comparison across persons as in the main analysis; (2) person fixed effects; (3) person fixed effects plus the ISCO major group, i.e. at a constant skill level, so that promotions or moves to another type of occupation are not counted as changes in exposure. Exposure is again multiplied by 10, so the coefficient is the change in income for a 0.1 change in exposure, close to a typical change of occupation. We keep only persons observed at least two years and only exact 4-digit codes: vague codes completed with zeros (for example 2500) create artificial changes of occupation from one year to the next (@tbl-app-changers). The main sample is tertiary-educated employees; all employees are used as a robustness check.
+
+This is a robustness check for sub-question 2; its main result is summarised in the Discussion.
+
+### Occupation changers {.unnumbered}
+
+Before estimating the model, we checked that enough persons change occupation, at three levels of detail: 4-digit codes (upper bound, which includes coding noise, for example the same job coded 2512 one year and 2514 the next), 2-digit groups (a different type of occupation) and major groups (a change of skill level, almost certainly real but rarer). We count these persons with all codes and with exact 4-digit codes only, because a vague code completed with zeros (for example 2000 one year, 2512 the next) creates an artificial change of occupation.
 
 ```{python}
 #| label: tbl-app-changers
@@ -279,6 +295,28 @@ app_changers = pd.DataFrame(changer_rows).set_index("Level")
 app_changers
 ```
 
+Of the `{python} f"{tert_panel['idpers'].nunique():,}"` graduates observed at least two years, `{python} f"{app_changers.loc['2 digits', 'All codes']:,}"` change 2-digit group with all codes, and `{python} f"{app_changers.loc['2 digits', 'Exact 4-digit codes only']:,}"` once the vague codes are removed (@tbl-app-changers). Removing the vague codes therefore eliminates a part of the changes that only come from the coding, which is why the within-person comparison uses exact codes only.
+
+```{python}
+#| label: tbl-within-sample
+#| tbl-cap: "Samples used for the within-person comparison (exact 4-digit codes, persons observed at least two years)"
+within_info
+```
+
+### Results {.unnumbered}
+
+```{python}
+#| label: tbl-within
+#| tbl-cap: "Exposure and log FTE income: comparison across persons (pooled OLS) and within persons (fixed effects). Coefficient = approximate % change in income for a 0.1 increase in exposure. Standard errors clustered by person."
+within_table.round(3)
+```
+
+The within-person estimates are identified by `{python} f"{n_t_changers:,}"` tertiary-educated persons (`{python} f"{n_a_changers:,}"` employees in total) whose exposure changes over the period (@tbl-within-sample); the median change is `{python} f"{within_info.loc['Tertiary-educated', 'Median size of a change in exposure']:.2f}"` on the 0-1 scale, so a change of occupation usually changes exposure by a noticeable amount.
+
+Among graduates, an exposure 0.1 higher is associated with an income about `{python} f"{t_pooled:+.1f}"`% different when we compare different persons (model 1), and `{python} f"{t_fe:+.1f}"`% when we compare each person with themselves (model 2, p = `{python} f"{p_t_fe:.3f}"`, `{python} significance(p_t_fe)`, @tbl-within). Among all employees, the two estimates are `{python} f"{a_pooled:+.1f}"`% and `{python} f"{a_fe:+.1f}"`% (p = `{python} f"{p_a_fe:.3f}"`). When the within-person estimate is smaller than the pooled one, the difference measures the part of the link across persons that comes from **which** workers sort into exposed occupations rather than from the occupation itself. Among graduates, the within-person estimate is `{python} sorting_word` the comparison across persons. Controlling for changes in major group (model 3) gives `{python} f"{t_fe_major:+.1f}"`% for graduates (p = `{python} f"{p_t_fe_major:.3f}"`) and `{python} f"{a_fe_major:+.1f}"`% for all employees (p = `{python} f"{p_a_fe_major:.3f}"`). `{python} major_text`
+
+These results should be read with care. Within-person estimates are imprecise, because they rely only on the persons who change occupation, and these persons are not a random subset of workers. Part of the remaining changes may still be coding noise, which pushes the estimates towards zero. Fixed effects remove what is constant for a person, but not events that happen together with the change of occupation (promotion, new employer). Finally, the ILO index is fixed in 2025: exposure changes only when the occupation changes, so these results describe wage differences between occupations, not the arrival of AI over time.
+
 ```{python}
 #| label: app-within-check
 #| output: false
@@ -293,5 +331,4 @@ lr_check = LinearRegression(fit_intercept=False).fit(X_check, y_check)
 coef_check = 100 * lr_check.coef_[0]
 ```
 
-Of the `{python} f"{tert_panel['idpers'].nunique():,}"` graduates observed at least two years, `{python} f"{app_changers.loc['2 digits', 'All codes']:,}"` change 2-digit group with all codes, and `{python} f"{app_changers.loc['2 digits', 'Exact 4-digit codes only']:,}"` once the vague codes are removed (@tbl-app-changers). Removing the vague codes therefore eliminates a part of the changes that only come from the coding, which is why the within-person comparison uses exact codes only. As a check of the method, a `LinearRegression` without intercept on the demeaned data gives a coefficient of `{python} f"{coef_check:+.2f}"`% for model 2, the same as `statsmodels` (`{python} f"{t_fe:+.2f}"`%, @tbl-within): `statsmodels` is used only for the clustered standard errors.
-
+As a check of the method, a `LinearRegression` without intercept on the demeaned data gives a coefficient of `{python} f"{coef_check:+.2f}"`% for model 2, the same as `statsmodels` (`{python} f"{t_fe:+.2f}"`%, @tbl-within): `statsmodels` is used only for the clustered standard errors.
