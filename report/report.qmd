@@ -52,7 +52,8 @@ format:
 
 jupyter: python3
 abstract: |
-  This is the abstract of the report. It should be a short summary of the project, the data, the analysis and the results. It should be concise and to the point. It should not be longer than 250 words.
+    Since the release of ChatGPT, generative AI is expected to affect highly educated occupations more than earlier waves of automation. We study whether occupational exposure to generative AI is associated with the wages of tertiary-educated employees in Switzerland, and whether it improves wage prediction. We link the Swiss Household Panel (2016-2024) with the ILO (2025) exposure index through 4-digit ISCO-08 codes. Graduates work in more exposed occupations than other employees, and better-paid occupations tend to be more exposed. However, adding exposure to a wage model improves prediction on unseen individuals only slightly, and a placebo test and nested regressions suggest that much of this gain comes from identifying the type of occupation. The association is weaker for young graduates. With only two waves after ChatGPT, these results describe associations rather than effects of AI.
+
 execute: 
   warning: false
   # Note: echo setting is controlled per-format above (HTML, PDF, DOCX)
