@@ -10,7 +10,7 @@ We combine four data sources:
    - `shplong_h_user.dta`: household questionnaire (canton, region).
 2. **ILO generative-AI exposure index (2025)**, from ILO Working Paper 140, *Generative AI and Jobs: A Refined Global Index of Occupational Exposure* [@gmyrek2025]. The file gives a 2025 exposure score between 0 and 1 for 3,265 tasks belonging to 427 four-digit ISCO-08 occupations, together with the occupation mean, the standard deviation of task scores and an exposure gradient.
 3. **Swiss Earnings Structure Survey (ESS/LSE)**, Federal Statistical Office, table T17 "Gross monthly wage by groups of occupations, age and gender, private and public sectors combined", 2012-2024 (every two years). It gives the median standardized gross monthly wage for 38 ISCO 2-digit occupation groups by age group. We use it to describe the link between wages and exposure with official data and to check that SHP wages are realistic. It is public and stored in `data/raw/`.
-4. **Survey of higher education graduates (EHA)**, Federal Statistical Office, standardized gross annual income one year after graduation by type of school, degree and field of study (graduation years 2002-2024). It will be used in the final report to check the incomes of young graduates in the SHP.
+4. **Survey of higher education graduates (EHA)**, Federal Statistical Office, standardized gross annual income one year after graduation by type of school, degree and field of study (graduation years 2002-2024). It is used in [Appendix F](#sec-app-eha) to describe the starting salaries of graduates and to check the incomes of young graduates in the SHP.
 
 The ILO index can be downloaded from the ILO website (https://www.ilo.org), and the ESS and EHA tables from the website of the Federal Statistical Office (https://www.bfs.admin.ch). All files were accessed in October 2026. All sources cover Switzerland, except the ILO index, which is global.
 
@@ -23,7 +23,7 @@ The analysis dataset is a **person-year panel**: one row is one employee observe
 | Identifiers | `idpers` (person), `idhous` (household), `year` (wave), `pdate` (interview date) |
 | Target | `log_income`: log of annual net employment income, in 2020 francs, converted to full-time equivalent |
 | Individual | `age`, `sex`, `isced` (education level), `pe31` (field of study), `tertiary`, `young` (25-34) |
-| Job | `isco3` (ISCO-08 occupation, 3 digits; 4 digits pending), `noga2m` (sector), `activity_rate` (% of full time) |
+| Job | `isco_code` (ISCO-08 occupation, 4 digits from the SHP add-on; `isco3` from the standard release), `noga2m` (sector), `activity_rate` (% of full time) |
 | Location | `region` (7 FSO major regions), `canton`, `com3_` (urban / rural) |
 | AI exposure (ILO) | `exposure_mean_2025`, `exposure_sd_2025`, `exposure_mean_2023` (per occupation) |
 | Weights | `wicss` (cross-sectional individual weight, used for descriptive statistics) |
@@ -73,9 +73,9 @@ The SHP cleaning is done with src/01_shp_cleaning.py. We stack the waves 2016 to
 
 ### Merging with the ILO index
 
-The ILO index is defined for 4-digit ISCO-08 occupations, while the standard SHP release only contains 3-digit codes (`is3maj`). The detailed 4-digit codes require an additional SHP contract, which we have requested and are still waiting for.
+The ILO index is defined for 4-digit ISCO-08 occupations, while the standard SHP release only contains 3-digit codes (`is3maj`). The detailed 4-digit codes of the main job (`IS4MAJ`) come from an additional SHP contract and are merged with our sample on `idpers` and `year`. `{python} f"{merge_info['source'].get('isco4', 0) / merge_info['source'].sum():.1%}"` of the observations match a 4-digit ILO occupation. When the answer is too vague, the SHP completes the code with zeros (for example 2500, "ICT professional, not specified"); these `{python} f"{merge_info['source'].get('group', 0) / merge_info['source'].sum():.1%}"` of observations receive the mean score of the known group (here 25). The remaining `{python} f"{merge_info['source'].get('isco3', 0) / merge_info['source'].sum():.1%}"`, without a code in the add-on, keep their 3-digit code from the standard release.
 
-To merge the two sources, we aggregate the ILO index to the level of the SHP codes. For each occupation group, the exposure score is the average of the task scores of all its occupations, and the dispersion is the standard deviation of these task scores. The ILO file does not contain employment weights, so all tasks have the same weight. The code is in `src/ilo_aggregate.py`, and the level is set by one parameter (`ISCO_LEVEL` in `src/analysis_data.py`). The results in this update use **`{python} merge_info["level"]`-digit codes**; the final report will use 4-digit codes once they are available.
+For the vague codes and the 3-digit codes, we aggregate the ILO index to the level of the known group. For each occupation group, the exposure score is the average of the task scores of all its occupations, and the dispersion is the standard deviation of these task scores. The ILO file does not contain employment weights, so all tasks have the same weight. The code is in `src/ilo_aggregate.py`, and the level is set by one parameter (`ISCO_LEVEL` in `src/analysis_data.py`). The results in this update use **`{python} merge_info["level"]`-digit codes**, the level of the ILO index.
 
 ```{python}
 #| label: tbl-merge
@@ -94,11 +94,10 @@ pd.DataFrame({
 
 ### Spotting Mistakes and Missing Data
 
-In the SHP, missing values are coded with negative numbers (-1 = does not know, -2 = no answer, -3 = inapplicable, ...). We recode them to missing values before filtering. Missing incomes are imputed by FORS in the file `imputed_income_pers_long_shp.dta`; only 3.6% of the incomes in our sample are imputed, and the indicator `impempyn` allows a robustness check without them. The ILO file required no cleaning: it has no missing 2025 scores and no duplicated tasks.
+In the SHP, missing values are coded with negative numbers (-1 = does not know, -2 = no answer, -3 = inapplicable, ...). We recode them to missing values before filtering. Missing incomes are imputed by FORS in the file `imputed_income_pers_long_shp.dta`; only 3.6% of the incomes in our sample are imputed, and the indicator `impempyn` allows a robustness check without them. The ILO file required no cleaning: it has no missing 2025 scores and no duplicated tasks. Results without imputed incomes are given in [Appendix D](#sec-app-imputed).
 
 ### Listing Anomalies and Outliers, and Other Challenges
 
-- **4-digit ISCO codes not yet available.** Until the detailed codes arrive, the exposure score is measured for 3-digit groups. This loses some detail: for example, all "business and administration professionals" share the same score. The pipeline is ready to switch to 4-digit codes by changing one parameter.
 - **Net vs gross income.** In the SHP, "net" means after social contributions (AHV/AVS, unemployment insurance), not after taxes. We use the net income `iempyni` because it has fewer missing values; only 3.6% of incomes are imputed by FORS. The gross income `iempyg` is kept to compare with the ESS.
 - **Inflation.** SHP incomes are in current francs. We deflate them with the CPI provided by FORS (base 2020), so no external CPI file is needed.
 - **Very low incomes and small activity rates.** Among employees aged 18 to 24, 38% have a full-time equivalent income below CHF 20,000 (apprentices, students), against 2 to 5% from age 25. We therefore keep only persons aged 25 to 65. We also drop activity rates below 20%, because the full-time conversion becomes unstable (CHF 5,000 at 5% would become CHF 100,000).
