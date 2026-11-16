@@ -202,3 +202,55 @@ app_sector
 ```
 
 The most exposed region is `{python} app_region.index[0]` and the least exposed is `{python} app_region.index[-1]` (@tbl-app-region). Differences between sectors are much larger than between regions (@tbl-app-sector), which is expected since exposure depends on the occupation, and occupations depend strongly on the sector.
+## Appendix F: Starting salaries of graduates (EHA) {#sec-app-eha .unnumbered}
+
+The FSO survey of higher education graduates (EHA) gives the standardized gross annual income (full-time equivalent) one year after graduation, for graduates working in Switzerland. It is public, aggregated data: it cannot be linked to the SHP, but it describes the starting point of the careers we study.
+
+```{python}
+#| label: fig-app-eha-trend
+#| fig-cap: "Median gross FTE income one year after graduation, by type of school and degree, graduation years 2002-2024 (EHA, real francs)"
+from eha_data import load_eha_processed
+
+eha_trend, eha_field, eha_sex = load_eha_processed(project_root)
+eha_trend["degree"] = eha_trend["school_type"] + ", " + eha_trend["exam_level"]
+
+plt.figure(figsize=(8, 4.5))
+sns.lineplot(data=eha_trend, x="graduation_year", y="median", hue="degree", marker="o")
+plt.xlabel("Graduation year")
+plt.ylabel("Median gross FTE income (CHF)")
+plt.legend(title="", fontsize=8)
+plt.tight_layout()
+plt.show()
+
+master_uni = eha_trend[(eha_trend["school_type"] == "University") & (eha_trend["exam_level"] == "Master")]
+master_2014 = master_uni.loc[master_uni["graduation_year"] == 2014, "median"].iloc[0]
+master_2024 = master_uni.loc[master_uni["graduation_year"] == 2024, "median"].iloc[0]
+```
+
+Starting salaries are very stable over time (@fig-app-eha-trend). The median income of university Master graduates is CHF `{python} f"{master_2024:,.0f}"` for the 2024 cohort, against CHF `{python} f"{master_2014:,.0f}"` for the 2014 cohort. The 2022 and 2024 cohorts, who entered the labour market after the release of ChatGPT, do not show a break in starting salaries.
+
+```{python}
+#| label: tbl-app-eha-field
+#| tbl-cap: "Gross FTE income one year after graduation, university Master graduates by field of study, graduation year 2024 (EHA)"
+field_master = eha_field[(eha_field["exam_level"] == "Master") & (eha_field["field"] != "Total")]
+field_master = field_master.set_index("field")[["q1", "median", "q3"]].sort_values("median", ascending=False)
+field_master.columns = ["1st quartile", "Median", "3rd quartile"]
+field_master
+```
+
+```{python}
+#| label: tbl-app-eha-sex
+#| tbl-cap: "Median gross FTE income one year after graduation, by sex, graduation year 2024 (EHA)"
+sex_table = eha_sex.pivot_table(index=["school_type", "exam_level"], columns="sex", values="median")
+sex_table["Gap women vs men (%)"] = ((sex_table["Women"] / sex_table["Men"] - 1) * 100).round(1)
+sex_table = sex_table[["Men", "Women", "Gap women vs men (%)"]]
+
+# SHP: median net FTE income of tertiary-educated employees aged 25-29
+shp_young_median = tert.loc[tert["age"] <= 29, "income_fte"].median()
+
+sex_table
+```
+
+Among Master graduates, Economics and business and Medicine graduates have the highest starting salaries, and Law graduates the lowest (@tbl-app-eha-field). Already one year after graduation, women earn less than men for every degree (@tbl-app-eha-sex), but the gap is small for university Master graduates compared with the gap we observe at older ages in the SHP.
+
+As a rough consistency check, the median net FTE income of tertiary-educated employees aged 25-29 in the SHP is CHF `{python} f"{shp_young_median:,.0f}"`. This is below the EHA medians, as expected: SHP incomes are net of social contributions (roughly 12-15% of the gross wage), include higher vocational graduates, and cover several years after graduation rather than exactly one. A full comparison will be part of the final report.
