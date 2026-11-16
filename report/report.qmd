@@ -74,35 +74,131 @@ execute:
 
 # Appendices {.unnumbered}
 
-::: {.callout-note}
-## What Goes in Appendices?
+These appendices compare the relation between AI exposure and wages across subgroups of tertiary-educated employees. They use the same data and the same tools as the EDA. For each group we report the number of observations, the weighted mean exposure, the median FTE income, the Spearman correlation between exposure and log income, and the difference in median income between the most and the least exposed quintile (quintiles defined on all graduates, as in @fig-young). These are descriptive comparisons: groups also differ in age, sector and occupation.
 
-**Appendices = supplementary material** that supports but isn't essential to your main story.
+```{python}
+#| label: appendix-setup
+#| output: false
+def subgroup_table(groups):
+    # one row per group: size, exposure, income, and the exposure-income relation
+    rows = []
+    for name, d in groups.items():
+        rho, p = stats.spearmanr(d["exposure_mean_2025"], d["log_income"])
+        med_q = d.groupby("exposure_q", observed=True)["income_fte"].median()
+        rows.append({
+            "Group": name,
+            "Observations": len(d),
+            "Persons": d["idpers"].nunique(),
+            "Mean exposure (weighted)": round((d["exposure_mean_2025"] * d["wicss"]).sum() / d["wicss"].sum(), 3),
+            "Median FTE income (CHF)": round(d["income_fte"].median()),
+            "Spearman ρ (exposure, income)": round(rho, 3),
+            "p-value": p,
+            "Q5 - Q1 median income (CHF)": round(med_q["Q5 (most)"] - med_q["Q1 (least)"]),
+        })
+    return pd.DataFrame(rows).set_index("Group")
+```
 
-**Include in appendices:**
+## Appendix A: Women and men {#sec-app-sex .unnumbered}
 
-- **Additional plots and visualizations** that provide extra detail but don't fit the main narrative flow
-- **Alternative visualizations** of the same data (e.g., different plot types)
-- **Exploratory plots** that informed your analysis but aren't central to your findings
-- **Full code listings** for complex analyses
-- **Extended statistical tables** with detailed results
-- **Technical details** about data processing steps
-- **Sensitivity analyses** or robustness checks
-- **Data dictionaries** with detailed variable descriptions
+```{python}
+#| label: tbl-app-sex
+#| tbl-cap: "Exposure and wages of tertiary-educated employees, by sex"
+app_sex = subgroup_table({
+    "Women": tert[tert["female"] == 1],
+    "Men": tert[tert["female"] == 0],
+})
+app_sex
+```
 
-**What to Keep in Main Report:**
+```{python}
+#| label: fig-app-sex
+#| fig-cap: "Median FTE income by quintile of AI exposure, tertiary-educated women and men"
+tert["sex_label"] = np.where(tert["female"] == 1, "Women", "Men")
+plt.figure(figsize=(8, 4))
+sns.pointplot(data=tert, x="exposure_q", y="income_fte", hue="sex_label",
+              estimator="median", errorbar=None)
+plt.xlabel("Quintile of occupational AI exposure")
+plt.ylabel("Median FTE income (CHF 2020)")
+plt.legend(title="Sex")
+plt.tight_layout()
+plt.show()
+```
 
-- **Key visualizations** that directly answer your research questions
-- **Essential plots** for understanding your methodology
-- **Critical results** that support your conclusions
-- **Main findings** that tell your data story
+Women are `{python} "more" if app_sex.loc["Women", "Mean exposure (weighted)"] > app_sex.loc["Men", "Mean exposure (weighted)"] else "less"` exposed than men on average (@tbl-app-sex). The correlation between exposure and income is `{python} f"{app_sex.loc['Women', 'Spearman ρ (exposure, income)']:.2f}"` for women and `{python} f"{app_sex.loc['Men', 'Spearman ρ (exposure, income)']:.2f}"` for men (@fig-app-sex).
 
-**Remember:** Main report should be self-contained. Reference appendices when needed: "See @sec-appendix-plots for additional plots."
-:::
+## Appendix B: Age groups {#sec-app-age .unnumbered}
 
+The EDA compares young (25-34) and older (35-65) graduates. Here we use four age groups of ten years.
 
-### Appendix A: Additional Exploratory Plots {#sec-appendix-plots}
+```{python}
+#| label: tbl-app-age
+#| tbl-cap: "Exposure and wages of tertiary-educated employees, by age group"
+age_bins = [25, 35, 45, 55, 66]  # 25-34, 35-44, 45-54, 55-65
+age_names = ["25-34", "35-44", "45-54", "55-65"]
+tert["age_group4"] = pd.cut(tert["age"], bins=age_bins, labels=age_names, right=False)
+app_age = subgroup_table({name: tert[tert["age_group4"] == name] for name in age_names})
+app_age
+```
 
-### Appendix B: Complete Code Listings {#sec-appendix-code}
+The median income rises with age, from CHF `{python} f"{app_age.iloc[0]['Median FTE income (CHF)']:,.0f}"` for graduates aged 25-34 to CHF `{python} f"{app_age.iloc[-1]['Median FTE income (CHF)']:,.0f}"` for those aged 55-65. The correlation between exposure and income is `{python} f"{app_age.iloc[0]['Spearman ρ (exposure, income)']:.2f}"` for the youngest group and `{python} f"{app_age.iloc[-1]['Spearman ρ (exposure, income)']:.2f}"` for the oldest (@tbl-app-age).
 
-### Appendix C: Supplementary Tables {#sec-appendix-tables}
+## Appendix C: Universities vs higher vocational education {#sec-app-tertiary .unnumbered}
+
+Our definition of tertiary education follows the FSO and includes higher vocational education (ISCED 5B). Here we separate universities, universities of applied sciences and doctorates (ISCED 5A and 6, the stricter definition) from higher vocational education (5B).
+
+```{python}
+#| label: tbl-app-tertiary
+#| tbl-cap: "Exposure and wages by type of tertiary education (ISCED 5A and 6 vs 5B)"
+app_tert = subgroup_table({
+    "Universities and doctorates (5A, 6)": tert[tert["isced"].isin([51, 60])],
+    "Higher vocational education (5B)": tert[tert["isced"] == 52],
+})
+app_tert
+```
+
+The relation between exposure and income is `{python} "positive" if app_tert.iloc[0]["Spearman ρ (exposure, income)"] > 0 else "negative"` for university graduates (ρ = `{python} f"{app_tert.iloc[0]['Spearman ρ (exposure, income)']:.2f}"`) and `{python} "positive" if app_tert.iloc[1]["Spearman ρ (exposure, income)"] > 0 else "negative"` for higher vocational graduates (ρ = `{python} f"{app_tert.iloc[1]['Spearman ρ (exposure, income)']:.2f}"`) (@tbl-app-tertiary).
+
+## Appendix D: Without imputed incomes {#sec-app-imputed .unnumbered}
+
+`{python} f"{tert['impempyn'].eq(1).mean():.1%}"` of the incomes of graduates are imputed by FORS. We check that the results do not depend on them.
+
+```{python}
+#| label: tbl-app-imputed
+#| tbl-cap: "Exposure and wages of tertiary-educated employees, with and without imputed incomes"
+app_imp = subgroup_table({
+    "All observations": tert,
+    "Without imputed incomes": tert[tert["impempyn"] != 1],
+})
+app_imp
+```
+
+Without imputed incomes, the correlation between exposure and income is `{python} f"{app_imp.iloc[1]['Spearman ρ (exposure, income)']:.2f}"`, compared with `{python} f"{app_imp.iloc[0]['Spearman ρ (exposure, income)']:.2f}"` with all observations (@tbl-app-imputed).
+
+## Appendix E: Exposure by region and by sector {#sec-app-region .unnumbered}
+
+```{python}
+#| label: tbl-app-region
+#| tbl-cap: "Tertiary-educated employees by region: weighted mean AI exposure and median FTE income"
+app_region = pd.DataFrame({
+    "Observations": tert.groupby("region_label").size(),
+    "Mean exposure (weighted)": weighted_mean(tert, "exposure_mean_2025", "region_label").round(3),
+    "Median FTE income (CHF)": tert.groupby("region_label")["income_fte"].median().round(),
+}).sort_values("Mean exposure (weighted)", ascending=False)
+app_region
+```
+
+```{python}
+#| label: tbl-app-sector
+#| tbl-cap: "Tertiary-educated employees in the 10 largest sectors (NOGA codes as in the SHP codebook): weighted mean AI exposure and median FTE income"
+app_sector = pd.DataFrame({
+    "Observations": tert.groupby("noga2m").size(),
+    "Mean exposure (weighted)": weighted_mean(tert, "exposure_mean_2025", "noga2m").round(3),
+    "Median FTE income (CHF)": tert.groupby("noga2m")["income_fte"].median().round(),
+})
+app_sector = app_sector.sort_values("Observations", ascending=False).head(10)
+app_sector = app_sector.sort_values("Mean exposure (weighted)", ascending=False)
+app_sector.index = app_sector.index.astype(int)
+app_sector
+```
+
+The most exposed region is `{python} app_region.index[0]` and the least exposed is `{python} app_region.index[-1]` (@tbl-app-region). Differences between sectors are much larger than between regions (@tbl-app-sector), which is expected since exposure depends on the occupation, and occupations depend strongly on the sector.
