@@ -283,6 +283,77 @@ In this specification we do **not** control for the ISCO major group, because th
 
 For graduates aged 35 or more before ChatGPT (the reference group), an exposure score 0.1 higher is associated with an income about `{python} f"{pct_exp:+.1f}"`% higher, holding the other variables constant, but this coefficient is not statistically significant at the 5% level (p = `{python} f"{p_exp:.3f}"`). For young graduates (25-34), the interaction coefficient is `{python} f"{coef_young:+.4f}"` (p = `{python} f"{p_young:.3f}"`): the association is significantly weaker for them. Their total slope is `{python} f"{ols_table.loc['exposure_10', 'Coefficient']:.4f}"` − `{python} f"{abs(coef_young):.4f}"` ≈ `{python} f"{ols_table.loc['exposure_10', 'Coefficient'] + coef_young:+.4f}"`, close to zero: among young graduates, working in a more exposed occupation is not associated with a higher income. After the release of ChatGPT (2023-2024), the interaction coefficient is `{python} f"{coef_post:+.4f}"` (p = `{python} f"{p_post:.3f}"`): we find no evidence that the association changed after ChatGPT. With only two waves after ChatGPT, this is a first indication rather than a conclusion. The coefficient of `young` alone is not shown, because it measures the gap between young and older graduates in an occupation with an exposure of 0, which does not exist.
 
+## Is the relation non-linear? (exposure quintiles)
+
+The EDA shows an inverted U for graduates aged 35-65: the median income rises from the least to the middle quintile of exposure, then falls in the most exposed one (@fig-young). These are raw medians, so the shape could simply reflect differences in age, education or sector between quintiles. We therefore replace the linear exposure term of the wage equation by **dummies for the five exposure quintiles** (`C(exposure_q)`, the same quintiles as in @fig-young, Q1 = reference), with the same controls, separately for graduates aged 35-65 and 25-34. Each coefficient is the income difference with the least exposed quintile for comparable graduates. Standard errors are again clustered by occupation.
+
+```{python}
+#| label: tbl-quintiles
+#| tbl-cap: "OLS wage equation with exposure quintiles instead of a linear term, tertiary-educated employees. Approximate % difference in FTE income compared with the least exposed quintile (Q1), same controls as in the OLS wage equation. Standard errors clustered by occupation."
+q_formula = ("log_income ~ C(exposure_q) + age + age2 + female + activity_rate"
+             " + C(isced) + C(region) + C(noga2m) + C(year)")
+q_levels = list(ols_df["exposure_q"].cat.categories)  # Q1 (least) ... Q5 (most)
+
+q_rows, q_fits = [], {}
+for age_name, d in [("35-65", ols_df[ols_df["young"] == 0]), ("25-34", ols_df[ols_df["young"] == 1])]:
+    fit = smf.ols(q_formula, data=d).fit(cov_type="cluster", cov_kwds={"groups": d["isco_code"]})
+    q_fits[age_name] = fit
+    for q in q_levels[1:]:
+        name = f"C(exposure_q)[T.{q}]"
+        b, se = fit.params[name], fit.bse[name]
+        q_rows.append({"Age": age_name, "Quintile": q,
+                       "% vs Q1": (np.exp(b) - 1) * 100,
+                       "95% CI low": (np.exp(b - 1.96 * se) - 1) * 100,
+                       "95% CI high": (np.exp(b + 1.96 * se) - 1) * 100,
+                       "p-value": fit.pvalues[name]})
+q_table = pd.DataFrame(q_rows)
+
+# older graduates: quintile with the highest income, and test "Q5 = that quintile"
+old_q = q_table[q_table["Age"] == "35-65"].set_index("Quintile")
+peak_q = old_q["% vs Q1"].idxmax() if old_q["% vs Q1"].max() > 0 else "Q1 (least)"
+fit_old = q_fits["35-65"]
+if peak_q not in ["Q1 (least)", "Q5 (most)"]:
+    contrast = np.zeros(len(fit_old.params))
+    contrast[list(fit_old.params.index).index("C(exposure_q)[T.Q5 (most)]")] = 1
+    contrast[list(fit_old.params.index).index(f"C(exposure_q)[T.{peak_q}]")] = -1
+    p_peak = float(fit_old.t_test(contrast).pvalue)
+    shape_text = (f"the income of comparable graduates is highest in {peak_q} "
+                  f"({old_q.loc[peak_q, '% vs Q1']:+.1f}% compared with Q1) and lower in the most exposed quintile "
+                  f"({old_q.loc['Q5 (most)', '% vs Q1']:+.1f}%); the difference between {peak_q} and Q5 is "
+                  + ("statistically significant at the 5% level" if p_peak < 0.05 else "not statistically significant")
+                  + f" (p = {p_peak:.3f}). "
+                  + ("The inverted U therefore remains once the controls are included."
+                     if p_peak < 0.05 else
+                     "The inverted U is therefore weaker once the controls are included."))
+else:
+    shape_text = (f"the income of comparable graduates is highest in {peak_q}, so the inverted U of the raw "
+                  "medians does not remain once the controls are included.")
+
+young_q = q_table[q_table["Age"] == "25-34"].set_index("Quintile")
+n_young_sig = int((young_q["p-value"] < 0.05).sum())
+
+q_table.set_index(["Age", "Quintile"]).round(3)
+```
+
+```{python}
+#| label: fig-quintiles
+#| fig-cap: "Income difference with the least exposed quintile (Q1) for comparable graduates, by quintile of AI exposure and age group (OLS with controls, 95% confidence intervals)"
+plt.figure(figsize=(8, 4))
+for i, (age_name, d) in enumerate(q_table.groupby("Age", sort=False)):
+    x = np.arange(1, 5) + (i - 0.5) * 0.15  # small shift so the two groups do not overlap
+    plt.errorbar(x, d["% vs Q1"], yerr=[d["% vs Q1"] - d["95% CI low"], d["95% CI high"] - d["% vs Q1"]],
+                 fmt="o-", capsize=3, label=age_name)
+plt.axhline(0, color="grey", linewidth=1)
+plt.xticks(range(1, 5), q_levels[1:])
+plt.xlabel("Quintile of occupational AI exposure (reference: Q1, least exposed)")
+plt.ylabel("% difference in FTE income vs Q1")
+plt.legend(title="Age")
+plt.tight_layout()
+plt.show()
+```
+
+For graduates aged 35-65, `{python} shape_text` For graduates aged 25-34, `{python} "none" if n_young_sig == 0 else n_young_sig` of the four quintile coefficients `{python} "is" if n_young_sig == 1 else "are"` statistically significant at the 5% level (@tbl-quintiles, @fig-quintiles). This confirms, without assuming a straight line, what the interaction exposure × young suggests: among young graduates, working in a more exposed occupation is not clearly associated with a higher income.
+
 ## Nested regression models
 
 The placebo test looks at prediction. For the association, we compare nested OLS models that add the variables step by step: (1) the control variables only, (2) the controls and the ISCO major group, (3) the controls and exposure, and (4) the controls, the ISCO major group and exposure. If exposure only reflected the broad type of occupation, its coefficient would disappear once the major group is controlled for (model 4).
