@@ -14,7 +14,7 @@ The goal of this project is to assess whether occupational exposure to generativ
 
 **Sub-questions:**
 
-1. **Distribution:** How is generative-AI exposure distributed across occupations, fields of study, sectors and regions? Are the best-paid occupations also the most exposed?
+1. **Distribution:** How is generative-AI exposure distributed across occupations, sectors and regions? Are the best-paid occupations also the most exposed?
 2. **Regression:** Does adding the AI exposure score to a baseline wage model reduce prediction error on a held-out test set, split by individual? If so, is the gain specific to AI exposure, or does it only reflect the type of occupation?
 3. **Young vs older graduates:** Does the relationship between AI exposure and wages differ between young graduates (aged 25 to 34) and older tertiary-educated workers?
 4. **Extension (augmentation vs automation):** Does the relationship differ between occupations more likely to be augmented by AI and those more likely to be automated, as measured by the dispersion of task-level exposure scores?
@@ -25,7 +25,8 @@ The goal of this project is to assess whether occupational exposure to generativ
 - **Definition of tertiary education:** we follow the Federal Statistical Office and include ISCED 5A, 5B and 6, i.e. universities, universities of applied sciences and teacher education, but also higher vocational education. A stricter definition (ISCED 5A and 6) is used as a robustness check in [Appendix C](#sec-app-tertiary).
 - **Target variable:** we use net employment income (after social contributions, not after taxes), deflated to 2020 francs and converted to full-time equivalent. Gross income is kept to compare with the FSO wage survey.
 - **Occupation codes:** we obtained the detailed 4-digit ISCO-08 codes of the SHP through an additional contract. The analysis now uses 4-digit codes, which match the level of the ILO index, instead of the 3-digit codes of the standard release.
-- **Sub-questions:** following the feedback on the proposal, the former sub-questions 2 (regression) and 3 (classification) overlapped. We dropped the classification and merged the remaining question into sub-question 2, which now also tests whether the gain from exposure only reflects the type of occupation. The train/test split is now made by person.
+- **Sub-questions:** following the feedback on the proposal, the former sub-questions 2 (regression) and 3 (classification) overlapped. We dropped the classification and merged the remaining question into sub-question 2, which now also tests whether the gain from exposure only reflects the type of occupation. The train/test split is now made by person. As suggested in the feedback, the EDA also compares graduates with all other employees and uses official wage data for the whole workforce, before focusing on graduates and on young graduates.
+- **Additional robustness checks:** for sub-question 2, we repeat the comparison of nested models on 10 person-level splits and add 2-digit ISCO groups, to test whether exposure adds anything beyond finer occupational categories. We also use the panel structure of the SHP: a within-person comparison (person fixed effects, [Appendix G](#sec-app-within)) follows graduates who change occupation, to check whether the link between exposure and wages only reflects which workers sort into exposed occupations. These checks do not change the research questions.
 - **ILO data format:** the ILO (2025) index was available as a task-level Excel file (3,265 tasks for 427 occupations), so no PDF extraction was needed.
 
 ## Related Work
