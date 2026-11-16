@@ -92,6 +92,7 @@ plt.ylabel("Density")
 plt.tight_layout()
 plt.show()
 ```
+@tbl-summary compares tertiary-educated employees with other employees. Graduates earn clearly more: their median FTE income is about CHF 91,700, against CHF 67,400 for other employees, a gap of about 36%. They are also slightly younger (43.5 vs 45.2 years on average), less often women (43% vs 52%) and work at a higher activity rate (85% vs 81%). @fig-income-dist shows that the whole income distribution of graduates is shifted to the right, not only its top: the education premium concerns most graduates, not only a few very high earners. In logs, both distributions are roughly symmetric, which supports using log income as the target of our models.
 
 ### Are graduates more exposed to generative AI?
 
@@ -361,6 +362,7 @@ pd.DataFrame({
     "p-value": [f"{t_p:.3g}", f"{f_p:.3g}"],
 }).set_index("Test")
 ```
+Both tests confirm the descriptive results (@tbl-tests). The difference in mean exposure between graduates and other employees is small in size (about 0.04 points on a 0-1 scale), but very unlikely to be due to chance (p < 0.001). Among graduates, mean log income also differs strongly between exposure quintiles (F = 379, p < 0.001). With several thousand observations, almost any difference becomes statistically significant, so these tests mainly tell us that the patterns are not random; the size of the differences (@tbl-summary, @fig-young) matters more than the p-values. Because the same person appears in several years, these p-values are only indicative.
 
 ## Key findings so far
 
