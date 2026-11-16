@@ -67,6 +67,7 @@ X_train_base, X_test_base = X_train.drop(columns=exposure), X_test.drop(columns=
 - **OLS and random forest** give a transparent benchmark and a flexible model; if exposure only helps the random forest, its role is probably non-linear.
 - **Grid search with cross-validation** selects the random forest settings on the training set only, as in the course; the test set is used once, at the end.
 - **Train/test split and 5-fold cross-validation** follow the course, so that the models are always evaluated on data they were not trained on.
+- **The placebo test and the nested models** check whether exposure carries information of its own or only identifies the type of occupation (second part of sub-question 2).
 - **The OLS wage equation** gives the direction and size of the association and tests whether it differs for young graduates and after the release of ChatGPT.
 
 ## Tuning the random forest
@@ -168,7 +169,7 @@ cv_results.round(4)
 
 On the test set, the best model is the `{python} best_test["Model"]` (`{python} best_test["Specification"]`), with an RMSE of `{python} f"{best_test['RMSE']:.3f}"` and an R² of `{python} f"{best_test['R²']:.3f}"` (@tbl-test-results). Adding the two exposure variables changes the test RMSE by `{python} f"{delta_ols:+.4f}"` for OLS and by `{python} f"{delta_rf:+.4f}"` for the random forest (a negative value means a better prediction). The RMSE varies by about `{python} f"{cv_std:.4f}"` across cross-validation folds (@tbl-cv-results), and `{python} exposure_verdict`.
 
-This result should be read with one point in mind: the baseline already contains the ISCO major group, so exposure can only add information *within* major groups. With 3-digit occupation codes, many workers share the same exposure score, which limits what it can add. The final report will repeat this comparison with 4-digit codes.
+This result should be read with one point in mind: the baseline already contains the ISCO major group, so exposure can only add information *within* major groups. Even with 4-digit codes, all workers in the same occupation share the same exposure score, which limits what it can add.
 
 ## Is exposure more than a label for the occupation? (placebo test)
 
@@ -307,9 +308,9 @@ Without the major group, the exposure coefficient is `{python} f"{coef_3:+.4f}"`
 
 ## Discussion
 
-These results give a first answer to our sub-questions 2, 3 and 4. Adding exposure lowers the prediction error only slightly, by less than the variation across cross-validation folds (sub-question 2). The placebo test and the nested models suggest that a large part of what exposure brings comes from identifying the type of occupation (sub-question 3). For young graduates, the relation between exposure and wages is weaker than for older graduates (sub-question 4). The question of whether the best-paid occupations are the most exposed (sub-question 1) was answered descriptively in the EDA (@fig-ess-scatter, @fig-occ-scatter). The augmentation vs automation extension (sub-question 5) and the analysis with 4-digit occupation codes, which will make the placebo test more informative, will be done in the final report.
+These results give a first answer to our sub-questions 2 and 3. Adding exposure lowers the prediction error only slightly, by less than the variation across cross-validation folds, and the placebo test and the nested models suggest that a large part of what exposure brings comes from identifying the type of occupation (sub-question 2). For young graduates, the relation between exposure and wages is weaker than for older graduates (sub-question 3). The question of whether the best-paid occupations are the most exposed (sub-question 1) was answered descriptively in the EDA (@fig-ess-scatter, @fig-occ-scatter). The augmentation vs automation extension (sub-question 4) will be done in the final report.
 
-The literature expects generative AI to affect well-paid, highly educated occupations more than earlier automation did [@eloundou2024; @gmyrek2025]. A positive association between exposure and wages, as in the official ESS data, is consistent with this view. It does not mean that AI raises wages: exposed occupations were already better paid before ChatGPT, and the ILO index mostly describes augmentation rather than replacement [@gmyrek2023].
+The literature expects generative AI to affect well-paid, highly educated occupations more than earlier automation did [@eloundou2024; @gmyrek2025]. Across occupations, better-paid occupations are indeed more exposed, both in the official ESS data and among graduates in the SHP (@fig-ess-scatter, @fig-occ-scatter). Once age, education, sector and the type of occupation are held constant, however, the association becomes small and not statistically significant (@tbl-ols, @tbl-nested). The positive link across occupations does not mean that AI raises wages: exposed occupations were already better paid before ChatGPT, and the ILO index mostly describes augmentation rather than replacement [@gmyrek2023].
 
 For future graduates, the practical implication is that a degree does not protect from exposure to generative AI: many graduate occupations are among the most exposed.
-Whether this exposure turns into lower or higher wages cannot be seen yet with two waves after ChatGPT; following the next SHP waves, with 4-digit occupation codes, is needed before drawing conclusions for career choices or training policies.
+Whether this exposure turns into lower or higher wages cannot be seen yet with two waves after ChatGPT; following the next SHP waves is needed before drawing conclusions for career choices or training policies.
